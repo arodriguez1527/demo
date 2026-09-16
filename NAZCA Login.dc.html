@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; color: #495057; background: #fff; -webkit-font-smoothing: antialiased; }
+  a { color: #3f6ad8; text-decoration: none; }
+  a:hover { color: #2f57b3; text-decoration: underline; }
+  input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #3f6ad8; outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#fff">
+
+  <main style="flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:center;gap:clamp(24px,5vw,72px);padding:clamp(28px,6vw,72px) clamp(20px,6vw,80px)">
+
+    <div style="display:flex;justify-content:center">
+      <svg viewBox="0 0 520 360" role="img" aria-label="Ilustración: monitor con una mano dibujando" style="width:100%;max-width:520px;height:auto;display:block">
+        <defs>
+          <pattern id="nz-dots" width="8" height="8" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.6" fill="#2f57b3"></circle>
+          </pattern>
+          <pattern id="nz-lines" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+            <rect width="2.4" height="7" fill="#c9d8f5"></rect>
+          </pattern>
+        </defs>
+
+        <path d="M80 150c-26 6-34 34-18 52 16 18 46 12 52-10 6-22-8-48-34-42z" fill="#dbe6fb"></path>
+        <path d="M44 232c-18 14-14 42 8 50 22 8 42-10 38-32-4-22-28-32-46-18z" fill="url(#nz-lines)"></path>
+        <path d="M452 160c24 4 34 32 20 52-14 20-46 16-54-6-8-22 10-50 34-46z" fill="#dbe6fb"></path>
+        <path d="M430 246c16 12 12 38-8 45-20 7-38-9-34-29 4-20 26-28 42-16z" fill="url(#nz-lines)"></path>
+        <circle cx="200" cy="128" r="30" fill="url(#nz-dots)" opacity=".5"></circle>
+
+        <ellipse cx="112" cy="220" rx="13" ry="7" fill="#1b2559"></ellipse>
+        <ellipse cx="108" cy="256" rx="13" ry="7" fill="#1b2559"></ellipse>
+        <ellipse cx="116" cy="292" rx="13" ry="7" fill="#1b2559"></ellipse>
+        <path d="M120 200c-14 40-14 90 0 128" stroke="#1b2559" stroke-width="2.5" fill="none"></path>
+
+        <rect x="104" y="112" width="304" height="196" rx="6" fill="#fff" stroke="#dde1e7" stroke-width="7"></rect>
+        <rect x="104" y="308" width="304" height="26" rx="4" fill="#eceff3"></rect>
+        <rect x="236" y="334" width="40" height="46" fill="#eceff3"></rect>
+        <rect x="186" y="374" width="140" height="8" rx="4" fill="#3f6ad8"></rect>
+        <circle cx="244" cy="321" r="4" fill="#3f6ad8"></circle>
+        <circle cx="258" cy="321" r="4" fill="#c9d8f5"></circle>
+        <circle cx="272" cy="321" r="4" fill="#3f6ad8"></circle>
+
+        <rect x="360" y="152" width="34" height="50" rx="3" fill="#3f6ad8"></rect>
+
+        <g transform="rotate(-9 262 210)">
+          <rect x="188" y="140" width="150" height="150" fill="#1b2559"></rect>
+          <circle cx="262" cy="236" r="24" fill="#e8413a"></circle>
+          <path d="M240 226h44M238 236h48M240 246h44M246 256h32" stroke="#1b2559" stroke-width="3"></path>
+        </g>
+
+        <path d="M112 262c34 12 70 14 104 6l6 20c-36 10-76 8-112-6z" fill="#dbe6fb"></path>
+        <path d="M216 268l24-6 6 20-24 8z" fill="#f4c9b4"></path>
+        <rect x="140" y="252" width="80" height="30" rx="14" transform="rotate(8 180 267)" fill="#3f6ad8"></rect>
+
+        <path d="M286 216l22-8 8 22-22 8z" fill="#f4c9b4"></path>
+        <rect x="296" y="196" width="68" height="28" rx="13" transform="rotate(-14 330 210)" fill="#3f6ad8"></rect>
+        <g transform="rotate(38 322 176)">
+          <rect x="314" y="86" width="16" height="78" rx="3" fill="#e8413a"></rect>
+          <rect x="314" y="164" width="16" height="16" fill="#1b2559"></rect>
+          <path d="M314 180h16l-8 16z" fill="#f4c9b4"></path>
+        </g>
+
+        <path d="M246 96l9 9-9 9-9-9z" fill="#1b2559"></path>
+        <path d="M330 118l7 7-7 7-7-7z" fill="#3f6ad8"></path>
+        <path d="M168 122l6 6-6 6-6-6z" fill="#3f6ad8"></path>
+      </svg>
+    </div>
+
+    <div style="width:100%;max-width:420px;justify-self:center;display:flex;flex-direction:column;gap:22px">
+
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+          <div style="display:flex;gap:2px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;background:#201f1d;color:#fff;font-size:24px;font-weight:700;letter-spacing:0">N</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;background:#fff;color:#201f1d;border:1px solid #201f1d;font-size:24px;font-weight:700">A</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;background:#201f1d;color:#fff;font-size:24px;font-weight:700">Z</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;background:#fff;color:#201f1d;border:1px solid #201f1d;font-size:24px;font-weight:700">C</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;background:#201f1d;color:#fff;font-size:24px;font-weight:700">A</span>
+          </div>
+          <span style="font-size:27px;font-weight:600;color:#201f1d;letter-spacing:-.2px">Software</span>
+        </div>
+        <p style="margin:0;font-size:17px;color:#6c757d;font-weight:400">Sistema Administrativa y de Gestión</p>
+      </div>
+
+      <h1 style="margin:6px 0 0;font-size:26px;font-weight:400;color:#343a40;letter-spacing:-.2px">Inicio de Sesión</h1>
+
+      <form action="./NAZCA Compras.dc.html" method="get" style="display:flex;flex-direction:column;gap:18px">
+        <input type="text" placeholder="Usuario" autoComplete="username" style="width:100%;height:50px;padding:0 16px;font-family:inherit;font-size:16px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+        <input type="password" placeholder="Contraseña" autoComplete="current-password" style="width:100%;height:48px;padding:0 16px;font-family:inherit;font-size:16px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+        <button type="submit" style="align-self:flex-start;margin-top:4px;padding:13px 26px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:#3f6ad8;border:1px solid #3f6ad8;border-radius:4px;cursor:pointer;transition:background .15s" style-hover="background:#3358b8;border-color:#3358b8" style-active="background:#2c4da0;border-color:#2c4da0">LOGIN</button>
+      </form>
+
+      <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+        <p style="margin:0;font-size:13px;color:#adb5bd">LOGIN entra a Registro de Compras a Proveedores.</p>
+      </sc-if>
+    </div>
+  </main>
+
+  <footer style="background:#3f6ad8;color:#fff;padding:24px clamp(20px,6vw,80px);font-size:15px">Copyright © 2026. All rights reserved.</footer>
+</div>
+
+<sc-if value="{{ false }}" hint-placeholder-val="{{ false }}">
+  <section style="border-top:1px solid #e9ecef;background:#f6f7f9;padding:40px clamp(20px,6vw,60px);display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <h2 style="margin:0;font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#868e96">Responsivo</h2>
+      <p style="margin:0;font-size:14px;color:#868e96">La misma pantalla a 768 y 390 px de ancho.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.6px;color:#adb5bd">TABLET · 768</span>
+        <div style="width:768px;max-width:100%;height:1024px;border:10px solid #22252a;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.08)">
+          <iframe src="./NAZCA Login.dc.html?frame=1" title="Tablet 768" style="width:748px;height:1004px;border:0;display:block"></iframe>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.6px;color:#adb5bd">MOBILE · 390</span>
+        <div style="width:390px;max-width:100%;height:844px;border:10px solid #22252a;border-radius:34px;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.08)">
+          <iframe src="./NAZCA Login.dc.html?frame=1" title="Mobile 390" style="width:370px;height:824px;border:0;display:block"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDeviceFrames&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Mockup&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const inFrame = typeof location !== 'undefined' && location.search.indexOf('frame') !== -1;
+    return {
+      showFrames: !inFrame && (this.props.showDeviceFrames ?? true),
+      showHint: !inFrame,
+      onSubmit: (e) => { e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>
