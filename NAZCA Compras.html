@@ -18,23 +18,17 @@
   input, select, textarea, button { font-family: inherit; }
   input::placeholder, textarea::placeholder { color: #8d99a6; }
   input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #0a6ff0; outline-offset: 1px; }
+  @keyframes nzFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes nzSlideL { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+  @keyframes nzSlide { from { transform: translateX(100%); } to { transform: translateX(0); } }
 </style>
 </helmet>
 
 <div style="min-height:100vh;display:flex;flex-direction:column;background:#fff">
 
   <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#0a6ff0;color:#fff;padding:9px clamp(12px,2vw,20px)">
-    <div style="display:flex;align-items:center;gap:6px">
-      <span style="display:flex;gap:1px">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;background:#fff;color:#0a6ff0;font-size:15px;font-weight:700">N</span>
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border:1px solid rgba(255,255,255,.85);font-size:15px;font-weight:700">A</span>
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;background:#fff;color:#0a6ff0;font-size:15px;font-weight:700">Z</span>
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border:1px solid rgba(255,255,255,.85);font-size:15px;font-weight:700">C</span>
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;background:#fff;color:#0a6ff0;font-size:15px;font-weight:700">A</span>
-      </span>
-      <span style="font-size:17px;font-weight:600;letter-spacing:-.2px">Software</span>
-    </div>
-    <a href="./NAZCA Login.dc.html" style="color:#fff;font-size:13px;opacity:.92">Salir</a>
+    <img src="./assets/logoFac.png" alt="NAZCA Software" style="height:28px;width:auto;display:block" />
+    <a href="./NAZCA Login.html" style="color:#fff;font-size:13px;opacity:.92">Salir</a>
   </header>
 
   <div style="position:relative;flex:1;display:flex;align-items:stretch;min-width:0;background:#fff">
@@ -47,7 +41,8 @@
       </div>
     </sc-if>
     <sc-if value="{{ wide }}" hint-placeholder-val="{{ false }}">
-    <aside style="flex:0 0 auto;position:{{ asidePos }};left:0;top:0;bottom:0;z-index:30;width:{{ asideWidth }};background:#fff;border-right:1px solid #e3e7eb;box-shadow:{{ asideShadow }};padding:12px 12px 20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+    <div onClick="{{ toggleAside }}" aria-hidden="true" style="position:fixed;inset:0;z-index:59;background:rgba(0,0,0,.5);animation:nzFade .15s linear"></div>
+    <aside role="dialog" aria-modal="true" aria-label="Comprobantes" style="position:fixed;left:0;top:0;bottom:0;z-index:60;width:{{ asideWidth }};max-width:100vw;background:#fff;border-right:1px solid rgba(0,0,0,.175);padding:12px 12px 20px;display:flex;flex-direction:column;gap:10px;overflow:auto;animation:nzSlideL .3s ease-in-out">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
         <select value="{{ selYear }}" onChange="{{ setYear }}" aria-label="Año" style="width:{{ yearWidth }};height:28px;padding:0 6px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
           <option>2026</option>
@@ -140,13 +135,13 @@
         </div>
       </sc-if>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr) );grid-template-columns:minmax(0,1fr) minmax(0,232px);gap:clamp(12px,1.8vw,24px);align-items:start">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr) );grid-template-columns:minmax(0,1fr) minmax(0,246px);gap:clamp(12px,1.8vw,24px);align-items:start">
 
         <div style="min-width:0;display:flex;flex-direction:column;gap:16px">
 
           <div style="display:grid;grid-template-columns:{{ headCols }};gap:clamp(16px,2.4vw,36px);align-items:start">
 
-            <div style="min-width:0;display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:12px;row-gap:9px;align-items:center">
+            <div style="min-width:0;margin-left:-8px;display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:12px;row-gap:9px;align-items:center">
               <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Secuencia</span>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
                 <span style="display:inline-flex;align-items:center;justify-content:center;min-width:128px;height:31px;padding:0 12px;font-size:17px;font-weight:700;letter-spacing:.5px;color:#212529;background:#e7ecf3;border:1px solid #d6dde7;border-radius:4px;font-variant-numeric:tabular-nums">{{ secuencia }}</span>
@@ -237,18 +232,18 @@
               </div>
 
               <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Teléfono</span>
-              <input type="text" value="{{ f.telefono.value }}" onChange="{{ f.telefono.onChange }}" aria-label="Teléfono" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;max-width:272px" />
+              <input type="text" value="{{ f.telefono.value }}" onChange="{{ f.telefono.onChange }}" aria-label="Teléfono" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;max-width:200px" />
 
               <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Comprobante</span>
-              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0">
-                <select aria-label="Tipo de comprobante" style="flex:1 1 170px;min-width:0;height:29px;padding:0 6px 0 12px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+              <div style="display:flex;flex-wrap:nowrap;align-items:center;gap:6px;min-width:0">
+                <select aria-label="Tipo de comprobante" style="flex:1 1 0;width:0;min-width:0;height:29px;padding:0 6px 0 12px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
                   <option>FACTURA</option>
                   <option>NOTA DE VENTA</option>
                   <option>LIQUIDACIÓN DE COMPRA</option>
                 </select>
-                <input type="text" value="{{ f.numeroComprobante.value }}" onChange="{{ f.numeroComprobante.onChange }}" placeholder="___-___-_________" aria-label="Número de comprobante" style="flex:1 1 140px;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
-                <div style="position:relative;flex:0 0 126px;display:flex;align-items:center;height:29px;background:#fff;border:1px solid #ced4da;border-radius:4px">
-                  <input type="text" readOnly="{{ true }}" value="{{ f.fechaComprobante.value }}" onClick="{{ toggleCalendarComp }}" aria-label="Fecha de comprobante" style="flex:1;min-width:0;height:27px;padding:0 4px 0 12px;font-size:12.5px;color:#343a40;background:transparent;border:0;border-radius:4px;cursor:pointer" />
+                <input type="text" inputMode="numeric" maxLength="17" value="{{ f.numeroComprobante.value }}" onChange="{{ maskComprobante }}" placeholder="___-___-_________" title="Formato 001-001-000000123" aria-label="Número de comprobante" style="flex:0 0 132px;min-width:0;height:29px;padding:0 8px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+                <div style="position:relative;flex:0 0 108px;min-width:0;display:flex;align-items:center;height:29px;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                  <input type="text" readOnly="{{ true }}" value="{{ f.fechaComprobante.value }}" onClick="{{ toggleCalendarComp }}" aria-label="Fecha de comprobante" style="flex:1;min-width:0;height:27px;padding:0 2px 0 8px;font-size:12.5px;color:#343a40;background:transparent;border:0;border-radius:4px;cursor:pointer" />
                   <button type="button" onClick="{{ toggleCalendarComp }}" title="Desplegar calendario" style="flex:0 0 auto;width:28px;height:27px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;color:#0a6ff0;cursor:pointer" style-hover="background:#eef3fd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></button>
                   <sc-if value="{{ calendarCompOpen }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute;top:32px;right:0;z-index:25;width:214px;padding:8px;background:#fff;border:1px solid #dfe3e8;border-radius:4px;box-shadow:0 8px 24px rgba(16,24,40,.16)">
@@ -273,15 +268,13 @@
           </div>
 
           <section style="min-width:0;display:flex;flex-direction:column;gap:8px">
-            <button type="button" onClick="{{ showDetalle }}" title="{{ detalleTitle }}" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:0;background:none;border:0;cursor:{{ detalleCursor }};text-align:left">
+            <button type="button" onClick="{{ showDetalle }}" title="Actualizar el detalle desde la base exenta y gravada" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:0 0 2px;background:none;border:0;border-bottom:2px solid #0a6ff0;cursor:pointer;text-align:left" style-hover="border-color:#2f57b3">
               <h2 style="margin:0;font-size:16px;font-weight:600;color:#0a6ff0">Detalle Contable</h2>
-              <sc-if value="{{ detalleHidden }}" hint-placeholder-val="{{ false }}">
-                <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#6c757d">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
-                  Clic para generar desde la base exenta y gravada
-                </span>
-              </sc-if>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a6ff0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"></path><path d="M21 3v5h-5"></path></svg>
             </button>
+            <sc-if value="{{ detalleHidden }}" hint-placeholder-val="{{ false }}">
+              <span style="margin-top:-4px;font-size:12px;color:#6c757d">Clic en el título para generar el detalle desde la base exenta y gravada.</span>
+            </sc-if>
 
             <sc-if value="{{ detalleVisible }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
@@ -293,10 +286,10 @@
                     <tr>
                       <th style="width:34px;padding:6px 4px;border-bottom:1px solid #dee2e6"></th>
                       <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2">Cuenta Contable</th>
-                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:17%">Referencia</th>
-                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:31%">Concepto</th>
-                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:14%">Debe</th>
-                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:14%">Haber</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:23%">Referencia</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:36%">Concepto</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Debe</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Haber</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -308,8 +301,8 @@
                         <td style="padding:3px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
                           <div style="display:flex;align-items:center;gap:4px;justify-content:space-between">
                             <span style="flex:1;min-width:0;text-align:center;color:#343a40;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.cuenta }}</span>
-                            <button type="button" onClick="{{ row.openPlan }}" title="Seleccionar plan de cuentas" style="flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;border-radius:50%;color:#6c757d;cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M8 12h8M12 8v8"></path></svg>
+                            <button type="button" onClick="{{ row.openPlan }}" title="Seleccionar plan de cuentas" style="flex:0 0 auto;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;border-radius:50%;color:#6c757d;cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M8 12h8M12 8v8"></path></svg>
                             </button>
                           </div>
                         </td>
@@ -317,8 +310,8 @@
                         <td data-concepto-cell="1" style="position:relative;padding:3px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
                           <div style="display:flex;align-items:center;gap:4px;justify-content:space-between">
                             <span style="flex:1;min-width:0;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.concepto }}</span>
-                            <button type="button" onClick="{{ row.openConcepto }}" title="Editar concepto" style="flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;background:{{ row.conceptoBtnBg }};border:0;border-radius:50%;color:{{ row.conceptoBtnColor }};cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M8 12h8M12 8v8"></path></svg>
+                            <button type="button" onClick="{{ row.openConcepto }}" title="Editar concepto" style="flex:0 0 auto;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:{{ row.conceptoBtnBg }};border:0;border-radius:50%;color:{{ row.conceptoBtnColor }};cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M8 12h8M12 8v8"></path></svg>
                             </button>
                           </div>
 
@@ -341,10 +334,10 @@
                           </sc-if>
                         </td>
                         <td style="padding:2px 4px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
-                          <input type="text" inputMode="decimal" aria-label="Debe" value="{{ row.debe }}" onChange="{{ row.setDebe }}" style="width:100%;height:24px;padding:0 4px;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:#343a40;background:transparent;border:1px solid transparent;border-radius:3px" style-hover="border-color:#ced4da;background:#fff" style-focus="border-color:#0a6ff0;background:#fff" />
+                          <input type="text" inputMode="decimal" aria-label="Debe" value="{{ row.debe }}" onChange="{{ row.setDebe }}" onBlur="{{ row.fmtDebe }}" style="width:100%;height:24px;padding:0 4px;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:#343a40;background:transparent;border:1px solid transparent;border-radius:3px" style-hover="border-color:#ced4da;background:#fff" style-focus="border-color:#0a6ff0;background:#fff" />
                         </td>
                         <td style="padding:2px 4px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
-                          <input type="text" inputMode="decimal" aria-label="Haber" value="{{ row.haber }}" onChange="{{ row.setHaber }}" style="width:100%;height:24px;padding:0 4px;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:#343a40;background:transparent;border:1px solid transparent;border-radius:3px" style-hover="border-color:#ced4da;background:#fff" style-focus="border-color:#0a6ff0;background:#fff" />
+                          <input type="text" inputMode="decimal" aria-label="Haber" value="{{ row.haber }}" onChange="{{ row.setHaber }}" onBlur="{{ row.fmtHaber }}" style="width:100%;height:24px;padding:0 4px;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:#343a40;background:transparent;border:1px solid transparent;border-radius:3px" style-hover="border-color:#ced4da;background:#fff" style-focus="border-color:#0a6ff0;background:#fff" />
                         </td>
                       </tr>
                     </sc-for>
@@ -366,13 +359,13 @@
                   <tr>
                     <td style="width:34px"></td>
                     <td></td>
-                    <td style="width:17%"></td>
-                    <td style="width:31%"></td>
-                    <td style="width:14%;padding:4px 8px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                    <td style="width:23%"></td>
+                    <td style="width:36%"></td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
                       <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ totalDebe }}</div>
                       <div style="font-size:10.5px;color:#868e96">Total</div>
                     </td>
-                    <td style="width:14%;padding:4px 8px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
                       <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ totalHaber }}</div>
                       <div style="font-size:10.5px;color:#868e96">Total</div>
                     </td>
@@ -383,12 +376,70 @@
             </div>
             </sc-if>
           </section>
+
+          <sc-if value="{{ hasDiarioAnexo }}" hint-placeholder-val="{{ false }}">
+          <section style="min-width:0;display:flex;flex-direction:column;gap:8px">
+            <h2 style="margin:0;font-size:16px;font-weight:400;color:#e8711a">Diario Anexo</h2>
+            <div style="display:flex;align-items:stretch;min-width:0">
+              <div style="flex:0 0 auto;width:5px;background:#f08a24;border-radius:2px 0 0 2px"></div>
+              <div style="flex:1;min-width:0;border:1px solid #dee2e6;border-left:0">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
+                  <thead>
+                    <tr>
+                      <th style="width:34px;padding:6px 4px;border-bottom:1px solid #dee2e6"></th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2">Cuenta Contable</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:23%">Referencia</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:36%">Concepto</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Debe</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Haber</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ diarioAnexo }}" as="d" hint-placeholder-count="3">
+                      <tr>
+                        <td style="padding:6px 4px;text-align:center;border-bottom:1px solid #eceff2">
+                          <input type="checkbox" disabled="{{ true }}" aria-label="Línea no editable" style="width:13px;height:13px" />
+                        </td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#343a40">{{ d.cuenta }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.referencia }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.concepto }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;color:#343a40">{{ d.debe }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;color:#343a40">{{ d.haber }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style="display:flex;margin-top:-8px;padding-left:6px">
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
+                <tbody>
+                  <tr>
+                    <td style="width:34px"></td>
+                    <td></td>
+                    <td style="width:23%"></td>
+                    <td style="width:36%"></td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                      <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ anexoDebe }}</div>
+                      <div style="font-size:10.5px;color:#868e96">Total</div>
+                    </td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                      <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ anexoHaber }}</div>
+                      <div style="font-size:10.5px;color:#868e96">Total</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          </sc-if>
         </div>
 
         <aside style="min-width:0;display:flex;flex-direction:column;gap:8px">
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
             <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Base Exenta</span>
-            <input type="text" inputMode="decimal" value="{{ baseExenta }}" onChange="{{ setBaseExenta }}" aria-label="Base Exenta" style="flex:0 0 auto;width:104px;height:28px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+            <input type="text" inputMode="decimal" value="{{ baseExenta }}" onChange="{{ setBaseExenta }}" onBlur="{{ fmtBaseExenta }}" aria-label="Base Exenta" style="flex:0 0 auto;width:104px;height:28px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+            <span style="flex:0 0 18px"></span>
           </div>
 
           <button type="button" onClick="{{ addBase }}" disabled="{{ addBaseDisabled }}" title="{{ addBaseTitle }}" style="align-self:flex-start;padding:0;font-size:12.5px;font-weight:600;color:#0a6ff0;background:none;border:0;border-bottom:1px solid #0a6ff0;cursor:{{ addBaseCursor }};opacity:{{ addBaseOpacity }}" style-hover="color:#2f57b3;border-color:#2f57b3">+ Base Gravada</button>
@@ -401,29 +452,31 @@
                 <option>5%</option>
                 <option>0%</option>
               </select>
-              <input type="text" inputMode="decimal" value="{{ b.amount }}" onChange="{{ b.setAmount }}" aria-label="Base gravada" style="flex:0 0 auto;width:104px;height:28px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px" />
-              <button type="button" onClick="{{ b.remove }}" disabled="{{ b.fixed }}" title="Quitar tarifa" style="flex:0 0 auto;width:18px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;margin:0 -4px 0 -2px;color:#8d99a6;background:transparent;border:0;border-radius:3px;cursor:pointer;visibility:{{ b.rmVis }}" style-hover="background:#fdecec;color:#c0392b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              <input type="text" inputMode="decimal" value="{{ b.amount }}" onChange="{{ b.setAmount }}" onBlur="{{ b.fmtAmount }}" aria-label="Base gravada" style="flex:0 0 auto;width:104px;height:28px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+              <button type="button" onClick="{{ b.remove }}" disabled="{{ b.fixed }}" title="Quitar tarifa" style="flex:0 0 auto;width:18px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#c0392b;background:transparent;border:0;border-radius:3px;cursor:pointer;visibility:{{ b.rmVis }}" style-hover="background:#fdecec;color:#c0392b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
             </div>
           </sc-for>
           <sc-if value="{{ hasBasesError }}" hint-placeholder-val="{{ false }}">
-            <div role="alert" style="padding:6px 8px;font-size:11.5px;color:#a61e2d;background:#fdf0f1;border:1px solid #f3c7cc;border-radius:4px">{{ basesError }}</div>
+            <div role="alert" style="margin-right:26px;padding:6px 8px;font-size:11.5px;color:#a61e2d;background:#fdf0f1;border:1px solid #f3c7cc;border-radius:4px">{{ basesError }}</div>
           </sc-if>
 
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:4px">
             <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Monto IVA</span>
             <output style="flex:0 0 auto;width:104px;height:28px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px">{{ montoIva }}</output>
+            <span style="flex:0 0 18px"></span>
           </div>
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
             <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Monto TOTAL</span>
             <output style="flex:0 0 auto;width:104px;height:28px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;font-weight:600;color:#343a40;background:#eceff2;border:1px solid #dee2e6;border-radius:4px">{{ montoTotal }}</output>
+            <span style="flex:0 0 18px"></span>
           </div>
 
-          <button type="button" onClick="{{ openAnexo }}" style="align-self:flex-start;margin-top:4px;padding:0;font-size:12.5px;font-weight:600;color:#0a6ff0;background:none;border:0;border-bottom:1px solid #0a6ff0;cursor:pointer" style-hover="color:#2f57b3;border-color:#2f57b3">+ Anexo</button>
+          <button type="button" onClick="{{ openAnexo }}" style="align-self:flex-start;margin-top:4px;padding:0;font-size:12.5px;font-weight:600;color:#e8711a;background:none;border:0;border-bottom:1px solid #e8711a;cursor:pointer" style-hover="color:#c45c10;border-color:#c45c10">+ Anexo</button>
 
           <sc-for list="{{ anexos }}" as="a" hint-placeholder-count="2">
-            <div style="display:flex;flex-direction:column;gap:1px;padding:6px 8px;font-size:11px;color:#6c757d;background:#fff;border:1px solid #e3e7eb;border-radius:4px">
+            <div style="display:flex;flex-direction:column;gap:1px;margin-right:26px;padding:6px 8px;min-width:0;font-size:11px;color:#6c757d;background:#fff;border:1px solid #e3e7eb;border-radius:4px">
               <div style="display:flex;justify-content:space-between;gap:8px;color:#343a40">
-                <span>{{ a.ref }}</span>
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ a.ref }}">{{ a.ref }}</span>
                 <span style="font-variant-numeric:tabular-nums">{{ a.amount }}</span>
               </div>
               <div>{{ a.date }}</div>
@@ -439,6 +492,7 @@
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:6px">
             <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Saldo TOTAL</span>
             <output style="flex:0 0 auto;width:104px;height:28px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;font-weight:600;color:#343a40;background:#eceff2;border:1px solid #dee2e6;border-radius:4px">{{ saldoTotal }}</output>
+            <span style="flex:0 0 18px"></span>
           </div>
         </aside>
       </div>
@@ -462,7 +516,8 @@
   </sc-if>
 
   <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;top:0;right:0;bottom:0;z-index:60;width:{{ modalWidth }};max-width:100vw;display:flex;flex-direction:column;background:#fff;border-left:1px solid #e3e7eb;box-shadow:-10px 0 34px rgba(16,24,40,.14)">
+    <div onClick="{{ closeModal }}" aria-hidden="true" style="position:fixed;inset:0;z-index:59;background:rgba(0,0,0,.5);animation:nzFade .15s linear"></div>
+    <div role="dialog" aria-modal="true" style="position:fixed;top:0;right:0;bottom:0;z-index:60;width:{{ modalWidth }};max-width:100vw;display:flex;flex-direction:column;background:#fff;border-left:1px solid #e3e7eb;border-left:1px solid rgba(0,0,0,.175);animation:nzSlide .3s ease-in-out">
       <div style="display:flex;align-items:center;gap:12px;padding:14px 18px">
         <button type="button" onClick="{{ closeModal }}" title="Cerrar" style="flex:0 0 auto;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;color:#343a40;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#eceff2">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
@@ -659,13 +714,13 @@ class Component extends DCLogic {
     query: '',
     conceptoLine: null,
     conceptoDraft: '',
-    ivaRows: [{ id: 1, base: '12,876.98', pct: '30%' }],
-    fuenteRows: [{ id: 1, code: '', base: '12,876.98' }],
+    ivaRows: [{ id: 1, base: '100.00', pct: '30%' }],
+    fuenteRows: [{ id: 1, code: '312', base: '200.00' }],
     anexoErrors: [],
     activeLine: null,
     secuencia: '0000123',
     estado: 'Bloqueado',
-    bases: [{ id: 1, rate: '15%', amount: '100.50' }],
+    bases: [{ id: 1, rate: '15%', amount: '100.50' }, { id: 2, rate: '8%', amount: '100.50' }],
     basesError: '',
     formErrors: [],
     detalleVisible: true,
@@ -681,12 +736,12 @@ class Component extends DCLogic {
     selMonth: 0,
     compView: { y: 2026, m: 0 },
     anexos: [
-      { ref: 'Ret: 001-001-000009876', amount: '32.00', value: 32, date: '12/ENE/2026', hasDetail: true, iva: 'Iva: 100  30% = 30.00', fte: 'Fte: 200  1%  (312) = 2.00' },
-      { ref: 'EgrBco: 0000987', amount: '200.00', value: 0, date: '15/ENE/2026', hasDetail: false, iva: '', fte: '' }
+      { ref: 'Ret: 001-001-000009876', amount: '32.00', value: 32, ivaVal: 30, fteVal: 2, date: '12/ENE/2026', hasDetail: true, iva: 'Iva: 100  30% = 30.00', fte: 'Fte: 200  1%  (312) = 2.00' },
+      { ref: 'EgrBco: 0000987', amount: '200.00', value: 0, ivaVal: 0, fteVal: 0, date: '15/ENE/2026', hasDetail: false, iva: '', fte: '' }
     ],
     lines: [
-      { id: 1, cuenta: '6464646', referencia: 'Caja', concepto: 'Diario de Reclasificacion', debe: '1233', haber: '', checked: false },
-      { id: 2, cuenta: '10101003', referencia: 'Recaudacio', concepto: 'Diario de Reclasificacion', debe: '', haber: '1200', checked: false },
+      { id: 1, cuenta: '6464646', referencia: 'Caja', concepto: 'Diario de Reclasificacion', debe: '1,233.00', haber: '', checked: false },
+      { id: 2, cuenta: '10101003', referencia: 'Recaudacio', concepto: 'Diario de Reclasificacion', debe: '', haber: '1,200.00', checked: false },
       { id: 3, cuenta: 'werwre', referencia: '', concepto: '', debe: '', haber: '', checked: false }
     ]
   };
@@ -758,7 +813,7 @@ class Component extends DCLogic {
   generarDetalle() {
     const s = this.state;
     const num = v => Number(String(v || '0').replace(/,/g, '')) || 0;
-    const f2 = n => (Math.round(n * 100) / 100).toFixed(2);
+    const f2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const exenta = num(s.baseExenta);
     const gravadas = s.bases.filter(b => num(b.amount) > 0);
     if (exenta <= 0 && !gravadas.length) {
@@ -888,11 +943,19 @@ class Component extends DCLogic {
     const selected = s.lines.filter(l => l.checked);
     const num = v => Number(String(v || '0').replace(/,/g, '')) || 0;
     const sum = k => s.lines.reduce((t, l) => t + num(l[k]), 0);
-    const fmt = n => n.toLocaleString('es-EC', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const ivaCalc = s.bases.reduce((t, b) => t + num(b.amount) * parseFloat(b.rate) / 100, 0);
     const gravadas = s.bases.reduce((t, b) => t + num(b.amount), 0);
     const montoTotal = num(s.baseExenta) + gravadas + ivaCalc;
     const retenido = s.anexos.reduce((t, a) => t + a.value, 0);
+    const PROVN = { '2101001': 'Cuentas por Pagar Proveedores', '2101002': 'Proveedores del Exterior' };
+    const diario = [];
+    s.anexos.filter(a => (a.ivaVal || 0) + (a.fteVal || 0) > 0).forEach(a => {
+      const c = 'Retención ' + a.ref.replace(/^Ret:\s*/, '');
+      diario.push({ cuenta: s.provision, referencia: PROVN[s.provision] || 'Proveedores', concepto: c, debe: (a.ivaVal || 0) + (a.fteVal || 0), haber: 0 });
+      if (a.ivaVal) diario.push({ cuenta: '2103001', referencia: 'Retención IVA por pagar', concepto: c, debe: 0, haber: a.ivaVal });
+      if (a.fteVal) diario.push({ cuenta: '2103002', referencia: 'Retención Fuente por pagar', concepto: c, debe: 0, haber: a.fteVal });
+    });
     const fmtN = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const MONTO_IVA = 100, BASE_IMP = 100;
     const RATES = { '312': 1, '322': 2, '332': 8 };
@@ -1017,6 +1080,8 @@ class Component extends DCLogic {
         toggle: () => this.setState(st => ({ lines: st.lines.map(x => (x.id === l.id ? Object.assign({}, x, { checked: !x.checked }) : x)) })),
         setDebe: e => this.setLine(l.id, 'debe', e.target.value),
         setHaber: e => this.setLine(l.id, 'haber', e.target.value),
+        fmtDebe: () => this.setLine(l.id, 'debe', (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(l.debe)),
+        fmtHaber: () => this.setLine(l.id, 'haber', (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(l.haber)),
         openPlan: () => this.setState({ modal: 'plan', activeLine: l.id, query: '' }),
         popoverOpen: s.conceptoLine === l.id,
         conceptoBtnBg: s.conceptoLine === l.id ? '#eef3fd' : 'transparent',
@@ -1029,8 +1094,8 @@ class Component extends DCLogic {
       addLine: () => this.setState(st => ({
         lines: st.lines.concat([{ id: Date.now(), cuenta: '', referencia: '', concepto: '', debe: '', haber: '', checked: false }])
       })),
-      totalDebe: fmt(sum('debe')).replace(/,00$/, ''),
-      totalHaber: fmt(sum('haber')).replace(/,00$/, ''),
+      totalDebe: fmt(sum('debe')),
+      totalHaber: fmt(sum('haber')),
 
       conceptoDraft: s.conceptoDraft,
       setConceptoDraft: e => this.setState({ conceptoDraft: e.target.value }),
@@ -1059,7 +1124,8 @@ class Component extends DCLogic {
         fixed: i === 0, rmVis: i === 0 ? 'hidden' : 'visible',
         remove: () => this.setState(st => ({ bases: st.bases.filter(x => x.id !== b.id), basesError: '' })),
         setRate: e => this.setBase(b.id, 'rate', e.target.value),
-        setAmount: e => this.setBase(b.id, 'amount', e.target.value)
+        setAmount: e => this.setBase(b.id, 'amount', e.target.value),
+        fmtAmount: () => this.setBase(b.id, 'amount', (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(b.amount))
       })),
       addBase: () => {
         if (!canAddBase) return;
@@ -1071,13 +1137,21 @@ class Component extends DCLogic {
       montoIva: fmt(ivaCalc),
       baseExenta: s.baseExenta,
       setBaseExenta: e => this.setState({ baseExenta: e.target.value, formErrors: [] }),
+      fmtBaseExenta: () => this.setState({ baseExenta: (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(s.baseExenta) }),
+      maskComprobante: e => {
+        const d = e.target.value.replace(/\D/g, '').slice(0, 15);
+        const v = d.length > 6 ? d.slice(0, 3) + '-' + d.slice(3, 6) + '-' + d.slice(6) : d.length > 3 ? d.slice(0, 3) + '-' + d.slice(3) : d;
+        this.setVal('numeroComprobante', v);
+      },
+      hasDiarioAnexo: diario.length > 0,
+      diarioAnexo: diario.map(x => ({ cuenta: x.cuenta, referencia: x.referencia, concepto: x.concepto, debe: x.debe ? fmt(x.debe) : '', haber: x.haber ? fmt(x.haber) : '' })),
+      anexoDebe: fmt(diario.reduce((t, x) => t + x.debe, 0)),
+      anexoHaber: fmt(diario.reduce((t, x) => t + x.haber, 0)),
       provision: s.provision,
       setProvision: e => this.setState({ provision: e.target.value }),
       detalleVisible: s.detalleVisible,
       detalleHidden: !s.detalleVisible,
-      detalleCursor: s.detalleVisible ? 'default' : 'pointer',
-      detalleTitle: s.detalleVisible ? '' : 'Generar el detalle contable',
-      showDetalle: () => { if (!s.detalleVisible) this.generarDetalle(); },
+      showDetalle: () => this.generarDetalle(),
       saldoTotal: fmt(montoTotal - retenido),
       anexos: s.anexos,
 
@@ -1110,6 +1184,7 @@ class Component extends DCLogic {
       openAnexo: () => this.setState({ modal: 'anexo', query: '' }),
 
       modalOpen: !!s.modal,
+      _lock: (typeof document !== "undefined" && (document.body.style.overflow = (s.modal || s.wide) ? "hidden" : "")),
       modalTitle: spec.title,
       modalHint: spec.hint,
       modalWidth: spec.width,
@@ -1183,13 +1258,16 @@ class Component extends DCLogic {
           const sumBases = s.ivaRows.reduce((t, r) => t + num(r.base), 0);
           if (Math.abs(sumBases - MONTO_IVA) > 0.005) errs.push('La suma de las bases de IVA (' + fmtN(sumBases) + ') debe ser igual al Monto IVA (' + fmtN(MONTO_IVA) + ').');
           if (errs.length) { this.setState({ anexoErrors: errs }); return; }
+          const ivaT = s.ivaRows.reduce((t, r) => t + num(r.base) * parseFloat(r.pct) / 100, 0);
+          const fteT = s.fuenteRows.reduce((t, r) => t + (r.code ? num(r.base) * RATES[r.code] / 100 : 0), 0);
           this.setState(st => ({
             anexoErrors: [],
             modal: null,
             anexos: st.anexos.concat([{
               ref: 'Ret: 001-001-00000' + (9876 + st.anexos.length),
-              amount: '32.00', value: 32, date: '12/ENE/2026', hasDetail: true,
-              iva: 'Iva: 100  30% = 30.00', fte: 'Fte: 200  1%  (312) = 2.00'
+              amount: fmtN(ivaT + fteT), value: ivaT + fteT, ivaVal: ivaT, fteVal: fteT, date: '12/ENE/2026', hasDetail: true,
+              iva: 'Iva: ' + st.ivaRows.map(r => fmtN(num(r.base)) + '  ' + r.pct).join(', ') + ' = ' + fmtN(ivaT),
+              fte: 'Fte: ' + fmtN(fteT)
             }])
           }));
         } else if (spec.rows) {
