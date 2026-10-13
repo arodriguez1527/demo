@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; color: #495057; background: #fff; -webkit-font-smoothing: antialiased; }
+  a { color: #3f6ad8; text-decoration: none; }
+  a:hover { color: #2f57b3; text-decoration: underline; }
+  input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #3f6ad8; outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#fff">
+
+  <main style="flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:center;gap:clamp(24px,5vw,72px);padding:clamp(28px,6vw,72px) clamp(20px,6vw,80px)">
+
+    <div style="display:flex;justify-content:center">
+      <img src="./assets/fondo_logo.png" alt="Ilustración de inicio de sesión" style="width:100%;max-width:540px;height:auto;display:block" />
+    </div>
+
+    <div style="width:100%;max-width:420px;justify-self:center;display:flex;flex-direction:column;gap:18px">
+
+      <img src="./assets/logoFac.png" alt="NAZCA Software — Sistema Administrativo y de Gestión" style="width:100%;max-width:300px;height:auto;display:block;filter:invert(1)" />
+
+      <h1 style="margin:2px 0 0;font-size:24px;font-weight:400;color:#343a40;letter-spacing:-.2px">Inicio de Sesión</h1>
+
+      <form action="./NAZCA Compras.dc.html" method="get" style="display:flex;flex-direction:column;gap:18px">
+        <input type="text" placeholder="Usuario Registrado" autoComplete="username" style="width:100%;height:50px;padding:0 16px;font-family:inherit;font-size:16px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+        <input type="password" placeholder="Contraseña" autoComplete="current-password" style="width:100%;height:48px;padding:0 16px;font-family:inherit;font-size:16px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+        <button type="submit" style="align-self:flex-start;margin-top:4px;min-width:120px;height:46px;padding:0 28px;font-family:inherit;font-size:20px;font-weight:400;color:#fff;background:#3b73cc;border:1px solid #3b73cc;border-radius:5px;box-shadow:0 2px 4px rgba(0,0,0,.18);cursor:pointer;transition:background .15s" style-hover="background:#3358b8;border-color:#3358b8" style-active="background:#2c4da0;border-color:#2c4da0">Iniciar</button>
+      </form>
+
+      <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+        <p style="margin:0;font-size:13px;color:#adb5bd">Iniciar entra a Registro de Compras a Proveedores.</p>
+      </sc-if>
+    </div>
+  </main>
+
+  <footer style="background:#3b73cc;color:#fff;padding:24px clamp(20px,6vw,80px);font-size:15px">Copyright © 2026. All rights reserved.</footer>
+</div>
+
+<sc-if value="{{ false }}" hint-placeholder-val="{{ false }}">
+  <section style="border-top:1px solid #e9ecef;background:#f6f7f9;padding:40px clamp(20px,6vw,60px);display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <h2 style="margin:0;font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#868e96">Responsivo</h2>
+      <p style="margin:0;font-size:14px;color:#868e96">La misma pantalla a 768 y 390 px de ancho.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.6px;color:#adb5bd">TABLET · 768</span>
+        <div style="width:768px;max-width:100%;height:1024px;border:10px solid #22252a;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.08)">
+          <iframe src="./NAZCA Login.dc.html?frame=1" title="Tablet 768" style="width:748px;height:1004px;border:0;display:block"></iframe>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.6px;color:#adb5bd">MOBILE · 390</span>
+        <div style="width:390px;max-width:100%;height:844px;border:10px solid #22252a;border-radius:34px;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.08)">
+          <iframe src="./NAZCA Login.dc.html?frame=1" title="Mobile 390" style="width:370px;height:824px;border:0;display:block"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDeviceFrames&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Mockup&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const inFrame = typeof location !== 'undefined' && location.search.indexOf('frame') !== -1;
+    return {
+      showFrames: !inFrame && (this.props.showDeviceFrames ?? true),
+      showHint: !inFrame,
+      onSubmit: (e) => { e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

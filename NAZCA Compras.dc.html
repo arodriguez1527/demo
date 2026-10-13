@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12.5px; color: #495057; background: #fff; -webkit-font-smoothing: antialiased; }
+  a { color: #0a6ff0; text-decoration: none; }
+  a:hover { color: #2f57b3; text-decoration: underline; }
+  input, select, textarea, button { font-family: inherit; }
+  input::placeholder, textarea::placeholder { color: #8d99a6; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #0a6ff0; outline-offset: 1px; }
+  @keyframes nzFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes nzSlideL { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+  @keyframes nzSlide { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes nzFadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes nzSlideOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
+  @keyframes nzSlideOutL { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#fff">
+
+  <header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;height:46px;padding:0 clamp(8px,1.4vw,16px);background:#0a6ff0;color:#fff">
+    <div data-nz-menu="1" style="position:relative;flex:0 0 auto">
+      <button type="button" onClick="{{ toggleMenu }}" title="Menú" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;color:#fff;background:{{ menuBtnBg }};border:0;border-radius:4px;cursor:pointer" style-hover="background:rgba(255,255,255,.16)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="5" r="1.9"></circle><circle cx="12" cy="5" r="1.9"></circle><circle cx="19" cy="5" r="1.9"></circle><circle cx="5" cy="12" r="1.9"></circle><circle cx="12" cy="12" r="1.9"></circle><circle cx="19" cy="12" r="1.9"></circle><circle cx="5" cy="19" r="1.9"></circle><circle cx="12" cy="19" r="1.9"></circle><circle cx="19" cy="19" r="1.9"></circle></svg>
+      </button>
+      <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+        <nav style="position:absolute;top:42px;left:0;z-index:70;min-width:220px;padding:6px;display:flex;flex-direction:column;gap:2px;background:#fff;border:1px solid #dfe3e8;border-radius:6px;box-shadow:0 10px 28px rgba(16,24,40,.18)">
+          <a href="./NAZCA Compras.dc.html" style="padding:8px 10px;font-size:12.5px;color:#0a6ff0;background:#eef3fd;border-radius:4px">Registro de Compras</a>
+          <a href="./NAZCA Login.dc.html" style="padding:8px 10px;font-size:12.5px;color:#343a40;border-radius:4px" style-hover="background:#f1f3f5;text-decoration:none">Salir</a>
+        </nav>
+      </sc-if>
+    </div>
+    <span style="flex:0 0 auto;font-size:16px;color:#fff;white-space:nowrap">Nazca Software</span>
+    <span style="flex:0 0 auto;width:1px;height:26px;background:rgba(255,255,255,.55)"></span>
+    <span style="flex:1;min-width:0;font-size:16px;font-weight:300;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Empresa de Prueba</span>
+  </header>
+
+  <div style="position:relative;flex:1;display:flex;align-items:stretch;min-width:0;background:#fff">
+
+    <sc-if value="{{ notWide }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 auto;padding:12px 10px 0 clamp(8px,1vw,12px)">
+        <button type="button" onClick="{{ toggleAside }}" title="Abrir panel de comprobantes" style="width:38px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:#495057;background:#eef1f5;border:1px solid #dfe3e8;border-radius:4px;cursor:pointer" style-hover="background:#e3eafa;color:#0a6ff0;border-color:#cfdcf3">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17l5-5-5-5M13 17l5-5-5-5"></path></svg>
+        </button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:fixed;inset:0;z-index:59;background:rgba(0,0,0,.5);animation:{{ asideFade }}"></div>
+    <aside role="dialog" aria-modal="true" aria-label="Comprobantes" style="position:fixed;left:0;top:0;bottom:0;z-index:60;width:{{ asideWidth }};max-width:100vw;background:#fff;border-right:1px solid rgba(0,0,0,.175);padding:12px 12px 20px;display:flex;flex-direction:column;gap:10px;overflow:auto;animation:{{ asideSlide }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <select value="{{ selYear }}" onChange="{{ setYear }}" aria-label="Año" style="width:{{ yearWidth }};height:28px;padding:0 6px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+          <option>2026</option>
+          <option>2025</option>
+          <option>2024</option>
+        </select>
+        <button type="button" onClick="{{ toggleAside }}" title="Abrir / cerrar panel de comprobantes" style="flex:0 0 auto;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:#6c757d;border:0;border-radius:4px;cursor:pointer;font-size:17px;line-height:1" style-hover="background:#eef3fd;color:#0a6ff0">{{ asideToggleLabel }}</button>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
+        <select value="{{ selMonth }}" onChange="{{ setMonth }}" aria-label="Mes" style="width:{{ monthWidth }};height:28px;padding:0 6px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+          <sc-for list="{{ monthOpts }}" as="mo" hint-placeholder-count="12">
+            <option value="{{ mo.v }}">{{ mo.label }}</option>
+          </sc-for>
+        </select>
+        <div style="display:{{ wideDisplay }};align-items:center;gap:6px">
+          <span style="font-size:12.5px;color:#6c757d">Búsqueda de Comprobante</span>
+          <button type="button" onClick="{{ openBusqueda }}" title="Buscar comprobante" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;border-radius:4px;color:#495057;cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:5px 6px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6">Número</th>
+            <th style="text-align:left;padding:5px 6px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6">Emisión</th>
+            <th style="display:{{ cellDisplay }};text-align:left;padding:5px 6px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6">Proveedor</th>
+            <th style="display:{{ cellDisplay }};text-align:left;padding:5px 6px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6">Valor</th>
+            <th style="display:{{ cellDisplay }};width:86px;padding:5px 6px;border-bottom:1px solid #dee2e6"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ docs }}" as="d" hint-placeholder-count="3">
+            <tr onClick="{{ d.open }}" style="cursor:pointer;background:{{ d.bg }}" style-hover="background:#eef3fd">
+              <td style="padding:5px 6px;border-bottom:1px solid #f0f2f4;color:#495057">{{ d.num }}</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #f0f2f4;color:#495057">{{ d.date }}</td>
+              <td style="display:{{ cellDisplay }};max-width:0;width:38%;padding:5px 6px;border-bottom:1px solid #f0f2f4;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.proveedor }}</td>
+              <td style="display:{{ cellDisplay }};padding:5px 6px;border-bottom:1px solid #f0f2f4;color:#495057;font-variant-numeric:tabular-nums">{{ d.valor }}</td>
+              <td style="display:{{ cellDisplay }};padding:5px 6px;border-bottom:1px solid #f0f2f4;text-align:right">
+                <sc-if value="{{ d.isAnulado }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-block;padding:2px 9px;font-size:12px;font-weight:600;color:#fff;background:#dc3545;border-radius:4px">Anulado</span>
+                </sc-if>
+                <sc-if value="{{ d.isRetenido }}" hint-placeholder-val="{{ false }}">
+                  <span title="Con retención registrada" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;font-size:12px;font-weight:600;color:#fff;background:#0aa54b;border-radius:50%">R</span>
+                </sc-if>
+              </td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </aside>
+    </sc-if>
+
+    <main style="flex:1;min-width:0;background:#fff;padding:14px clamp(12px,2vw,22px) 70px;display:flex;flex-direction:column;gap:14px">
+
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <h1 style="margin:0;font-size:clamp(16px,1.8vw,20px);font-weight:400;color:#343a40;letter-spacing:-.2px">Registro de Compras a Proveedores</h1>
+          <div style="font-size:clamp(15px,1.6vw,18px);font-weight:600;color:#212529">{{ periodo }}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <button type="button" onClick="{{ onNuevo }}" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#e9eef7;border-color:#cfdcf3;color:#2f57b3">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path d="M12 12v5M9.5 14.5h5"></path></svg>
+            Nuevo Comprobante
+          </button>
+          <button type="button" onClick="{{ onGrabar }}" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#e9eef7;border-color:#cfdcf3;color:#2f57b3">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path></svg>
+            Grabar
+          </button>
+          <button type="button" onClick="{{ onAnular }}" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#fdecec;border-color:#f6cfcf;color:#c0392b">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M5.6 5.6l12.8 12.8"></path></svg>
+            Anular
+          </button>
+          <button type="button" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#e9eef7;border-color:#cfdcf3;color:#2f57b3">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path></svg>
+            Imprimir
+          </button>
+        </div>
+      </div>
+
+      <div style="height:1px;background:#dfe3e8"></div>
+
+      <sc-if value="{{ hasFormError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display:flex;flex-direction:column;gap:2px;padding:8px 12px;font-size:12.5px;color:#a61e2d;background:#fdf0f1;border:1px solid #f3c7cc;border-radius:4px">
+          <sc-for list="{{ formErrors }}" as="e" hint-placeholder-count="1">
+            <span>{{ e.msg }}</span>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr) );grid-template-columns:minmax(0,1fr) minmax(0,246px);gap:clamp(12px,1.8vw,24px);align-items:start">
+
+        <div style="min-width:0;display:flex;flex-direction:column;gap:16px">
+
+          <div style="display:grid;grid-template-columns:{{ headCols }};gap:clamp(16px,2.4vw,36px);align-items:start">
+
+            <div style="min-width:0;margin-left:-8px;display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:12px;row-gap:9px;align-items:center">
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Secuencia</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <span style="display:inline-flex;align-items:center;justify-content:center;min-width:128px;height:31px;padding:0 12px;font-size:17px;font-weight:700;letter-spacing:.5px;color:#212529;background:#e7ecf3;border:1px solid #d6dde7;border-radius:4px;font-variant-numeric:tabular-nums">{{ secuencia }}</span>
+                <sc-if value="{{ showEstado }}" hint-placeholder-val="{{ true }}">
+                  <span style="padding:4px 14px;font-size:12.5px;color:#fff;background:#dc3545;border-radius:4px">{{ estado }}</span>
+                </sc-if>
+              </div>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Emisión</span>
+              <div style="position:relative;width:140px;display:flex;align-items:center;height:29px;background:#fff;border:1px solid {{ dEmi.border }};box-shadow:{{ dEmi.ring }};border-radius:4px">
+                  <input type="text" inputMode="numeric" maxLength="10" placeholder="dd/mm/aaaa" value="{{ dEmi.value }}" onChange="{{ dEmi.onChange }}" onFocus="{{ dEmi.onFocus }}" onBlur="{{ dEmi.onBlur }}" onKeyDown="{{ dEmi.onKeyDown }}" aria-label="Fecha de Emisión" style="flex:1;min-width:0;height:27px;padding:0 4px 0 12px;font-size:12.5px;color:#343a40;background:transparent;border:0;border-radius:4px;outline:none;font-variant-numeric:tabular-nums" />
+                  <button type="button" onClick="{{ toggleCalendar }}" title="Desplegar calendario" style="flex:0 0 auto;width:28px;height:27px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;color:#0a6ff0;cursor:pointer" style-hover="background:#eef3fd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></button>
+                  <sc-if value="{{ calendarOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;top:32px;right:0;z-index:25;width:214px;padding:8px;background:#fff;border:1px solid #dfe3e8;border-radius:4px;box-shadow:0 8px 24px rgba(16,24,40,.16)">
+                      <div style="padding:0 2px 6px;font-size:12.5px;font-weight:600;color:#343a40">{{ calEmiTitle }}</div>
+                      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px">
+                        <sc-for list="{{ calendarCells }}" as="c" hint-placeholder-count="35">
+                          <button type="button" onClick="{{ c.pick }}" disabled="{{ c.disabled }}" style="height:24px;font-size:11.5px;font-weight:{{ c.fw }};color:{{ c.color }};background:{{ c.bg }};border:0;border-radius:3px;cursor:{{ c.cursor }}" style-hover="background:{{ c.hover }}">{{ c.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Provisión</span>
+              <select aria-label="Provisión" value="{{ provision }}" onChange="{{ setProvision }}" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;padding:0 6px 0 12px;color:#495057">
+                <sc-for list="{{ provisionOpts }}" as="p" hint-placeholder-count="2">
+                  <option value="{{ p.code }}">{{ p.name }}</option>
+                </sc-for>
+              </select>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Reposición de Caja</span>
+              <select aria-label="Reposición de Caja" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;padding:0 6px 0 12px;color:#495057">
+                <option>Ninguno...</option>
+                <option>Caja Chica Matriz</option>
+                <option>Caja Chica Sucursal</option>
+              </select>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Crédito</span>
+              <div style="display:flex;align-items:center;width:98px;height:29px;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                <input type="text" inputMode="numeric" defaultValue="30" aria-label="Días de crédito" style="width:46px;min-width:0;height:27px;padding:0 4px;font-size:12.5px;text-align:center;color:#343a40;background:transparent;border:0;border-radius:4px" />
+                <span style="font-size:12.5px;color:#495057">días</span>
+              </div>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap;align-self:start;padding-top:6px">Concepto</span>
+              <textarea value="{{ f.conceptoGeneral.value }}" onChange="{{ f.conceptoGeneral.onChange }}" aria-label="Concepto" rows="3" style="width:100%;min-height:64px;padding:6px 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;resize:vertical"></textarea>
+            </div>
+
+            <div style="min-width:0;display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:12px;row-gap:9px;align-items:center">
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Documento</span>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-width:0">
+                <select aria-label="Tipo de identificación" title="R = RUC, C = Cédula" style="flex:0 0 auto;width:52px;height:29px;padding:0 4px 0 10px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                  <option value="R" title="RUC">R</option>
+                  <option value="C" title="Cédula">C</option>
+                </select>
+                <div style="flex:1 1 150px;min-width:0;max-width:160px;display:flex;align-items:center;height:29px;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                  <input type="text" value="{{ f.numeroDocumento.value }}" onChange="{{ f.numeroDocumento.onChange }}" aria-label="Número de documento" style="flex:1;min-width:0;height:27px;padding:0 4px 0 12px;font-size:12.5px;color:#343a40;background:transparent;border:0;border-radius:4px" />
+                  <button type="button" onClick="{{ openProveedor }}" title="Buscar proveedor" style="flex:0 0 auto;width:28px;height:27px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;color:#6c757d;cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+                  </button>
+                </div>
+                <sc-if value="{{ isProveedorNuevo }}" hint-placeholder-val="{{ true }}">
+                  <span title="El proveedor no existe; se creará al grabar" style="padding:3px 16px;font-size:12.5px;color:#fff;background:#1e8a44;border-radius:10px">Nuevo</span>
+                </sc-if>
+                <button type="button" onClick="{{ openSri }}" style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;padding:0;font-size:12.5px;font-weight:600;color:#0a6ff0;background:none;border:0;border-bottom:1px solid #0a6ff0;cursor:pointer;white-space:nowrap" style-hover="color:#2f57b3;border-color:#2f57b3">
+                  Comprobante Electrónico
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>
+                </button>
+              </div>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Razón Social</span>
+              <input type="text" value="{{ f.razonSocial.value }}" onChange="{{ f.razonSocial.onChange }}" aria-label="Razón Social" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Dirección</span>
+              <input type="text" value="{{ f.direccion.value }}" onChange="{{ f.direccion.onChange }}" aria-label="Dirección" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Correo</span>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:29px;padding:3px 5px;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                <sc-for list="{{ correos }}" as="c" hint-placeholder-count="2">
+                  <span style="display:inline-flex;align-items:center;gap:6px;height:21px;padding:0 4px 0 6px;font-size:10.5px;color:#343a40;background:#f1f3f5;border:1px solid #dee2e6;border-radius:3px">
+                    {{ c.email }}
+                    <button type="button" onClick="{{ c.remove }}" title="Quitar correo" style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#495057;background:transparent;border:0;border-radius:2px;cursor:pointer" style-hover="background:#dee2e6;color:#212529">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                    </button>
+                  </span>
+                </sc-for>
+                <input type="email" value="{{ correoDraft }}" onChange="{{ setCorreoDraft }}" onKeyDown="{{ correoKeyDown }}" aria-label="Agregar correo" style="flex:1 1 90px;min-width:0;height:21px;padding:0 4px;font-size:12.5px;color:#343a40;background:transparent;border:0" />
+              </div>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Teléfono</span>
+              <input type="text" value="{{ f.telefono.value }}" onChange="{{ f.telefono.onChange }}" aria-label="Teléfono" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;max-width:200px" />
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Comprobante</span>
+              <div style="display:flex;flex-wrap:nowrap;align-items:center;gap:6px;min-width:0">
+                <select aria-label="Tipo de comprobante" style="flex:1 1 0;width:0;min-width:0;height:29px;padding:0 6px 0 12px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                  <option>FACTURA</option>
+                  <option>NOTA DE VENTA</option>
+                  <option>LIQUIDACIÓN DE COMPRA</option>
+                </select>
+                <input type="text" inputMode="numeric" maxLength="17" value="{{ f.numeroComprobante.value }}" onChange="{{ maskComprobante }}" placeholder="Número" title="Formato 999-999-999999999" aria-label="Número de comprobante" style="flex:0 0 132px;min-width:0;height:29px;padding:0 8px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+                <div style="position:relative;flex:0 0 108px;min-width:0;display:flex;align-items:center;height:29px;background:#fff;border:1px solid {{ dComp.border }};box-shadow:{{ dComp.ring }};border-radius:4px">
+                  <input type="text" inputMode="numeric" maxLength="10" placeholder="dd/mm/aaaa" value="{{ dComp.value }}" onChange="{{ dComp.onChange }}" onFocus="{{ dComp.onFocus }}" onBlur="{{ dComp.onBlur }}" onKeyDown="{{ dComp.onKeyDown }}" aria-label="Fecha de comprobante" style="flex:1;min-width:0;height:27px;padding:0 2px 0 8px;font-size:12.5px;color:#343a40;background:transparent;border:0;border-radius:4px;outline:none;font-variant-numeric:tabular-nums" />
+                  <button type="button" onClick="{{ toggleCalendarComp }}" title="Desplegar calendario" style="flex:0 0 auto;width:28px;height:27px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;color:#0a6ff0;cursor:pointer" style-hover="background:#eef3fd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></button>
+                  <sc-if value="{{ calendarCompOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;top:32px;right:0;z-index:25;width:214px;padding:8px;background:#fff;border:1px solid #dfe3e8;border-radius:4px;box-shadow:0 8px 24px rgba(16,24,40,.16)">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0 6px">
+                        <button type="button" onClick="{{ prevComp }}" disabled="{{ prevCompDisabled }}" style="width:24px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#495057;background:transparent;border:0;border-radius:3px;cursor:pointer;opacity:{{ prevCompDisabledOp }}" style-hover="background:#eef3fd;color:#0a6ff0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+                        <span style="font-size:12.5px;font-weight:600;color:#343a40">{{ calCompTitle }}</span>
+                        <button type="button" onClick="{{ nextComp }}" disabled="{{ nextCompDisabled }}" style="width:24px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#495057;background:transparent;border:0;border-radius:3px;cursor:pointer;opacity:{{ nextCompDisabledOp }}" style-hover="background:#eef3fd;color:#0a6ff0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg></button>
+                      </div>
+                      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px">
+                        <sc-for list="{{ calendarCompCells }}" as="c" hint-placeholder-count="35">
+                          <button type="button" onClick="{{ c.pick }}" disabled="{{ c.disabled }}" style="height:24px;font-size:11.5px;font-weight:{{ c.fw }};color:{{ c.color }};background:{{ c.bg }};border:0;border-radius:3px;cursor:{{ c.cursor }}" style-hover="background:{{ c.hover }}">{{ c.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+
+              <span style="font-size:12.5px;color:#495057;text-align:right;white-space:nowrap">Clave de Acceso</span>
+              <input type="text" value="{{ f.autorizacion.value }}" onChange="{{ f.autorizacion.onChange }}" aria-label="Clave de Acceso" style="width:100%;min-width:0;height:29px;padding:0 9px;font-size:12.5px;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+            </div>
+          </div>
+
+          <section style="min-width:0;display:flex;flex-direction:column;gap:8px">
+            <button type="button" onClick="{{ showDetalle }}" title="Actualizar líneas de Monto TOTAL e IVA" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:0 0 2px;background:none;border:0;border-bottom:2px solid #0a6ff0;cursor:pointer;text-align:left" style-hover="border-color:#2f57b3">
+              <h2 style="margin:0;font-size:16px;font-weight:600;color:#0a6ff0">Detalle Contable</h2>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a6ff0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"></path><path d="M21 3v5h-5"></path></svg>
+            </button>
+            <sc-if value="{{ detalleHidden }}" hint-placeholder-val="{{ false }}">
+              <span style="margin-top:-4px;font-size:12px;color:#6c757d">Clic en el título para generar el detalle desde la base exenta y gravada.</span>
+            </sc-if>
+
+            <sc-if value="{{ detalleVisible }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+            <div style="display:flex;align-items:stretch;min-width:0">
+              <div style="flex:0 0 auto;width:5px;background:#0a6ff0;border-radius:2px 0 0 2px"></div>
+              <div style="flex:1;min-width:0;border:1px solid #dee2e6;border-left:0">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
+                  <thead>
+                    <tr>
+                      <th style="width:34px;padding:6px 4px;border-bottom:1px solid #dee2e6"></th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2">Cuenta Contable</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:23%">Referencia</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:36%">Concepto</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Debe</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Haber</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ lines }}" as="row" hint-placeholder-count="3">
+                      <tr style="background:{{ row.bg }}">
+                        <td style="padding:3px 4px;text-align:center;border-bottom:1px solid #eceff2">
+                          <input type="checkbox" checked="{{ row.checked }}" disabled="{{ row.isFixed }}" onChange="{{ row.toggle }}" title="{{ row.checkTitle }}" aria-label="Seleccionar línea" style="width:13px;height:13px;accent-color:#0a6ff0;cursor:{{ row.checkCursor }}" />
+                        </td>
+                        <td style="padding:3px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
+                          <div style="display:flex;align-items:center;gap:4px;justify-content:space-between">
+                            <span style="flex:1;min-width:0;text-align:center;color:#343a40;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.cuenta }}</span>
+                            <button type="button" onClick="{{ row.openPlan }}" title="Seleccionar plan de cuentas" style="visibility:{{ row.planVis }};flex:0 0 auto;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;border-radius:50%;color:#6c757d;cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M8 12h8M12 8v8"></path></svg>
+                            </button>
+                          </div>
+                        </td>
+                        <td style="padding:3px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.referencia }}</td>
+                        <td data-concepto-cell="1" style="position:relative;padding:3px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
+                          <div style="display:flex;align-items:center;gap:4px;justify-content:space-between">
+                            <span style="flex:1;min-width:0;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.concepto }}</span>
+                            <button type="button" onClick="{{ row.openConcepto }}" title="Editar concepto" style="flex:0 0 auto;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:{{ row.conceptoBtnBg }};border:0;border-radius:50%;color:{{ row.conceptoBtnColor }};cursor:pointer" style-hover="background:#eef3fd;color:#0a6ff0">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M8 12h8M12 8v8"></path></svg>
+                            </button>
+                          </div>
+
+                          <sc-if value="{{ row.popoverOpen }}" hint-placeholder-val="{{ false }}">
+                            <div style="position:absolute;top:-8px;right:4px;z-index:50;transform:translateY(-100%);width:440px;max-width:86vw;text-align:left;background:#fff;border:1px solid #d9dee3;border-radius:6px;box-shadow:0 10px 28px rgba(16,24,40,.18)">
+                              <div style="padding:8px 12px;font-size:12.5px;font-weight:600;color:#343a40;background:#f6f8fa;border-bottom:1px solid #e9ecef;border-radius:6px 6px 0 0">Concepto</div>
+                              <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px">
+                                <textarea autoFocus="{{ true }}" value="{{ conceptoDraft }}" onChange="{{ setConceptoDraft }}" onKeyDown="{{ conceptoKeyDown }}" maxLength="300" placeholder="Texto completo del concepto de esta línea" style="flex:1;min-width:0;min-height:84px;padding:7px 8px;font-size:12.5px;line-height:1.45;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;resize:vertical"></textarea>
+                                <div style="display:flex;flex-direction:column;gap:6px">
+                                  <button type="button" onClick="{{ cancelConcepto }}" title="Cancelar (Esc)" style="width:30px;height:28px;display:inline-flex;align-items:center;justify-content:center;color:#fff;background:#dc3545;border:1px solid #c92c3c;border-radius:4px;cursor:pointer" style-hover="background:#c92c3c">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                                  </button>
+                                  <button type="button" onClick="{{ saveConcepto }}" title="Aceptar" style="width:30px;height:28px;display:inline-flex;align-items:center;justify-content:center;color:#fff;background:#0aa54b;border:1px solid #099343;border-radius:4px;cursor:pointer" style-hover="background:#099343">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"></path></svg>
+                                  </button>
+                                </div>
+                              </div>
+                              <div style="margin-top:-4px;padding:0 52px 8px 12px;font-size:11px;color:#8d99a6;text-align:right;font-variant-numeric:tabular-nums">{{ conceptoCount }} / 300</div>
+                              <span style="position:absolute;right:14px;bottom:-7px;width:12px;height:12px;background:#fff;border-right:1px solid #d9dee3;border-bottom:1px solid #d9dee3;transform:rotate(45deg)"></span>
+                            </div>
+                          </sc-if>
+                        </td>
+                        <td style="padding:2px 4px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
+                          <input type="text" inputMode="decimal" aria-label="Debe" readOnly="{{ row.isFixed }}" value="{{ row.debe }}" onChange="{{ row.setDebe }}" onBlur="{{ row.fmtDebe }}" style="width:100%;height:24px;padding:0 4px;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:#343a40;background:transparent;border:1px solid transparent;border-radius:3px" style-hover="border-color:#ced4da;background:#fff" style-focus="border-color:#0a6ff0;background:#fff" />
+                        </td>
+                        <td style="padding:2px 4px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2">
+                          <input type="text" inputMode="decimal" aria-label="Haber" readOnly="{{ row.isFixed }}" value="{{ row.haber }}" onChange="{{ row.setHaber }}" onBlur="{{ row.fmtHaber }}" style="width:100%;height:24px;padding:0 4px;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:#343a40;background:transparent;border:1px solid transparent;border-radius:3px" style-hover="border-color:#ced4da;background:#fff" style-focus="border-color:#0a6ff0;background:#fff" />
+                        </td>
+                      </tr>
+                    </sc-for>
+                    <tr>
+                      <td style="padding:3px 4px;text-align:center">
+                        <input type="checkbox" disabled="{{ true }}" aria-label="Fila nueva" style="width:13px;height:13px" />
+                      </td>
+                      <td colspan="5" style="padding:3px 6px;border-left:1px solid #eceff2">
+                        <button type="button" onClick="{{ addLine }}" style="padding:4px 6px;font-size:12.5px;color:#0a6ff0;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#eef3fd">+ Agregar Cuenta</button>
+                      </td>
+                    </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+            <div style="display:flex;margin-top:-8px;padding-left:6px">
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
+                <tbody>
+                  <tr>
+                    <td style="width:34px"></td>
+                    <td></td>
+                    <td style="width:23%"></td>
+                    <td style="width:36%"></td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                      <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ totalDebe }}</div>
+                      <div style="font-size:10.5px;color:#868e96">Total</div>
+                    </td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                      <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ totalHaber }}</div>
+                      <div style="font-size:10.5px;color:#868e96">Total</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            </div>
+            </sc-if>
+          </section>
+
+          <sc-if value="{{ hasDiarioAnexo }}" hint-placeholder-val="{{ false }}">
+          <section style="min-width:0;display:flex;flex-direction:column;gap:8px">
+            <h2 style="margin:0;font-size:16px;font-weight:400;color:#e8711a">Diario Anexo</h2>
+            <div style="display:flex;align-items:stretch;min-width:0">
+              <div style="flex:0 0 auto;width:5px;background:#f08a24;border-radius:2px 0 0 2px"></div>
+              <div style="flex:1;min-width:0;border:1px solid #dee2e6;border-left:0">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
+                  <thead>
+                    <tr>
+                      <th style="width:34px;padding:6px 4px;border-bottom:1px solid #dee2e6"></th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2">Cuenta Contable</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:23%">Referencia</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:36%">Concepto</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Debe</th>
+                      <th style="text-align:center;padding:6px 8px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6;border-left:1px solid #eceff2;width:10.5%">Haber</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ diarioAnexo }}" as="d" hint-placeholder-count="3">
+                      <tr>
+                        <td style="padding:6px 4px;text-align:center;border-bottom:1px solid #eceff2">
+                          <input type="checkbox" disabled="{{ true }}" aria-label="Línea no editable" style="width:13px;height:13px" />
+                        </td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#343a40">{{ d.cuenta }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.referencia }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.concepto }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;color:#343a40">{{ d.debe }}</td>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eceff2;border-left:1px solid #eceff2;text-align:center;color:#495057;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;color:#343a40">{{ d.haber }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style="display:flex;margin-top:-8px;padding-left:6px">
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
+                <tbody>
+                  <tr>
+                    <td style="width:34px"></td>
+                    <td></td>
+                    <td style="width:23%"></td>
+                    <td style="width:36%"></td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                      <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ anexoDebe }}</div>
+                      <div style="font-size:10.5px;color:#868e96">Total</div>
+                    </td>
+                    <td style="width:10.5%;padding:4px 6px;text-align:center;border:1px solid #dee2e6;border-top:0;line-height:1.1">
+                      <div style="font-size:13px;color:#343a40;font-variant-numeric:tabular-nums">{{ anexoHaber }}</div>
+                      <div style="font-size:10.5px;color:#868e96">Total</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          </sc-if>
+        </div>
+
+        <aside style="min-width:0;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Base Exenta</span>
+            <input type="text" inputMode="decimal" value="{{ baseExenta }}" onChange="{{ setBaseExenta }}" onBlur="{{ fmtBaseExenta }}" aria-label="Base Exenta" style="flex:0 0 auto;width:104px;height:28px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+            <span style="flex:0 0 18px"></span>
+          </div>
+
+          <button type="button" onClick="{{ addBase }}" disabled="{{ addBaseDisabled }}" title="{{ addBaseTitle }}" style="align-self:flex-start;padding:0;font-size:12.5px;font-weight:600;color:#0a6ff0;background:none;border:0;border-bottom:1px solid #0a6ff0;cursor:{{ addBaseCursor }};opacity:{{ addBaseOpacity }}" style-hover="color:#2f57b3;border-color:#2f57b3">+ Base Gravada</button>
+
+          <sc-for list="{{ bases }}" as="b" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <select aria-label="Tarifa" value="{{ b.rate }}" onChange="{{ b.setRate }}" style="flex:0 0 auto;width:62px;height:28px;padding:0 4px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                <option>15%</option>
+                <option>8%</option>
+                <option>5%</option>
+                <option>0%</option>
+              </select>
+              <input type="text" inputMode="decimal" value="{{ b.amount }}" onChange="{{ b.setAmount }}" onBlur="{{ b.fmtAmount }}" aria-label="Base gravada" style="flex:0 0 auto;width:104px;height:28px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px" />
+              <button type="button" onClick="{{ b.remove }}" disabled="{{ b.fixed }}" title="Quitar tarifa" style="flex:0 0 auto;width:18px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#c0392b;background:transparent;border:0;border-radius:3px;cursor:pointer;visibility:{{ b.rmVis }}" style-hover="background:#fdecec;color:#c0392b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-for>
+          <sc-if value="{{ hasBasesError }}" hint-placeholder-val="{{ false }}">
+            <div role="alert" style="margin-right:26px;padding:6px 8px;font-size:11.5px;color:#a61e2d;background:#fdf0f1;border:1px solid #f3c7cc;border-radius:4px">{{ basesError }}</div>
+          </sc-if>
+
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:4px">
+            <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Monto IVA</span>
+            <output style="flex:0 0 auto;width:104px;height:28px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px">{{ montoIva }}</output>
+            <span style="flex:0 0 18px"></span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Monto TOTAL</span>
+            <output style="flex:0 0 auto;width:104px;height:28px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;font-weight:600;color:#343a40;background:#eceff2;border:1px solid #dee2e6;border-radius:4px">{{ montoTotal }}</output>
+            <span style="flex:0 0 18px"></span>
+          </div>
+
+          <button type="button" onClick="{{ openAnexo }}" style="align-self:flex-start;margin-top:4px;padding:0;font-size:12.5px;font-weight:600;color:#e8711a;background:none;border:0;border-bottom:1px solid #e8711a;cursor:pointer" style-hover="color:#c45c10;border-color:#c45c10">+ Anexo</button>
+
+          <sc-for list="{{ anexos }}" as="a" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:1px;margin-right:26px;padding:6px 8px;min-width:0;font-size:11px;color:#6c757d;background:#fff;border:1px solid #e3e7eb;border-radius:4px">
+              <div style="display:flex;justify-content:space-between;gap:8px;color:#343a40">
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ a.ref }}">{{ a.ref }}</span>
+                <span style="font-variant-numeric:tabular-nums">{{ a.amount }}</span>
+              </div>
+              <div>{{ a.date }}</div>
+              <sc-if value="{{ a.hasDetail }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:1px;padding-top:2px">
+                  <span>{{ a.iva }}</span>
+                  <span>{{ a.fte }}</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:6px">
+            <span style="flex:1;min-width:0;font-size:12.5px;text-align:right;color:#495057">Saldo TOTAL</span>
+            <output style="flex:0 0 auto;width:104px;height:28px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;font-weight:600;color:#343a40;background:#eceff2;border:1px solid #dee2e6;border-radius:4px">{{ saldoTotal }}</output>
+            <span style="flex:0 0 18px"></span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border:1px solid #e3e7eb;border-radius:6px;box-shadow:0 8px 28px rgba(16,24,40,.16)">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;font-size:12.5px;font-weight:600;color:#fff;background:#0a6ff0;border-radius:50%">{{ selectedCount }}</span>
+      <span style="font-size:12.5px;color:#343a40">{{ selectionLabel }}</span>
+      <span style="width:1px;height:26px;background:#e3e7eb"></span>
+      <button type="button" onClick="{{ deleteSelected }}" style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 8px;font-size:11px;color:#495057;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#fdecec;color:#c0392b">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"></path></svg>
+        Eliminar
+      </button>
+      <span style="width:1px;height:26px;background:#e3e7eb"></span>
+      <button type="button" onClick="{{ clearSelection }}" title="Cerrar" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;color:#6c757d;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#eceff2;color:#343a40">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:fixed;inset:0;z-index:59;background:rgba(0,0,0,.5);animation:{{ modalFade }}"></div>
+    <div role="dialog" aria-modal="true" style="position:fixed;top:0;right:0;bottom:0;z-index:60;width:{{ modalWidth }};max-width:100vw;display:flex;flex-direction:column;background:#fff;border-left:1px solid #e3e7eb;border-left:1px solid rgba(0,0,0,.175);animation:{{ modalSlide }}">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 18px">
+        <button type="button" onClick="{{ closeModal }}" title="Cerrar" style="flex:0 0 auto;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;color:#343a40;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#eceff2">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+        <h3 style="margin:0;font-size:15px;font-weight:400;color:#212529">{{ modalTitle }}</h3>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow-y:auto;padding:0 18px 18px;display:flex;flex-direction:column;gap:12px">
+
+        <sc-if value="{{ hasTable }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+            <div style="position:relative;display:flex;align-items:center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8d99a6" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="position:absolute;left:12px"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+              <input type="text" value="{{ query }}" onChange="{{ setQuery }}" placeholder="Busca lo que quieras. . ." aria-label="Buscar" style="width:100%;height:32px;padding:0 12px 0 32px;font-size:12.5px;color:#343a40;background:#f1f3f5;border:1px solid #f1f3f5;border-radius:16px" style-focus="border-color:#0a6ff0;background:#fff" />
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+              <thead>
+                <tr>
+                  <sc-for list="{{ modalCols }}" as="c" hint-placeholder-count="3">
+                    <th style="text-align:left;padding:7px 10px;font-weight:400;color:#343a40;border-bottom:1px solid #dee2e6">{{ c.label }}</th>
+                  </sc-for>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ modalRows }}" as="r" hint-placeholder-count="4">
+                  <tr onClick="{{ r.pick }}" style="cursor:{{ r.cursor }}" style-hover="background:{{ r.hover }}">
+                    <sc-for list="{{ r.cells }}" as="cell" hint-placeholder-count="3">
+                      <td style="padding:7px 10px 7px {{ cell.pl }};border-bottom:1px solid #eceff2;color:{{ cell.color }};font-weight:{{ cell.fw }}">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                          <span>{{ cell.v }}</span>
+                          <sc-if value="{{ cell.reserved }}" hint-placeholder-val="{{ false }}">
+                            <span title="Cuenta reservada" style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;font-size:10.5px;font-weight:600;color:#fff;background:#0aa54b;border-radius:50%">R</span>
+                          </sc-if>
+                        </div>
+                      </td>
+                    </sc-for>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:6px 2px;font-size:12.5px;color:#8d99a6">Sin coincidencias para la búsqueda.</p>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isConcepto }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <textarea defaultValue="{{ conceptoText }}" rows="8" placeholder="Concepto de la línea" style="width:100%;padding:8px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px;resize:vertical"></textarea>
+            <div style="display:flex;justify-content:flex-end;gap:8px">
+              <button type="button" onClick="{{ closeModal }}" style="padding:8px 16px;font-size:12.5px;font-weight:600;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px;cursor:pointer" style-hover="background:#f1f3f5">Cancelar</button>
+              <button type="button" onClick="{{ confirmModal }}" style="padding:8px 16px;font-size:12.5px;font-weight:600;color:#fff;background:#0a6ff0;border:1px solid #0a6ff0;border-radius:4px;cursor:pointer" style-hover="background:#0a5fce;border-color:#0a5fce">Aceptar</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAnexo }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px">
+              <button type="button" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#e9eef7;border-color:#cfdcf3;color:#2f57b3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path d="M12 12v5M9.5 14.5h5"></path></svg>
+                Nuevo Comprobante
+              </button>
+              <button type="button" onClick="{{ confirmModal }}" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#e9eef7;border-color:#cfdcf3;color:#2f57b3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path></svg>
+                Grabar
+              </button>
+              <button type="button" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#fdecec;border-color:#f6cfcf;color:#c0392b">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M5.6 5.6l12.8 12.8"></path></svg>
+                Anular
+              </button>
+              <button type="button" style="display:inline-flex;align-items:center;gap:7px;padding:6px 10px;font-size:12.5px;color:#343a40;background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer" style-hover="background:#e9eef7;border-color:#cfdcf3;color:#2f57b3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path></svg>
+                Imprimir
+              </button>
+            </div>
+
+            <div style="height:1px;background:#dfe3e8"></div>
+
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#343a40;cursor:pointer">
+                  <input type="radio" name="tipoRet" defaultChecked="{{ true }}" style="width:14px;height:14px;accent-color:#0a6ff0;cursor:pointer" />
+                  Comprobante Electrónico
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#343a40;cursor:pointer">
+                  <input type="radio" name="tipoRet" style="width:14px;height:14px;accent-color:#0a6ff0;cursor:pointer" />
+                  Gasto
+                </label>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;padding-right:30px">
+                <span style="font-size:15px;font-weight:600;color:#343a40;font-variant-numeric:tabular-nums">001-001-000000987</span>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="font-size:12.5px;text-align:right;color:#495057">Emisión</span>
+                  <div style="width:140px;display:flex;align-items:center;height:29px;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                    <input type="text" readOnly="{{ true }}" defaultValue="01/01/2026" aria-label="Fecha de emisión de la retención" style="flex:1;min-width:0;height:27px;padding:0 4px 0 12px;font-size:12.5px;color:#343a40;background:transparent;border:0;border-radius:4px" />
+                    <span style="flex:0 0 auto;width:28px;display:inline-flex;align-items:center;justify-content:center;color:#0a6ff0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="height:1px;background:#dfe3e8"></div>
+
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 112px 78px 96px 22px;column-gap:8px;align-items:center">
+                <span style="font-size:12.5px;text-align:right;color:#495057">Monto IVA</span>
+                <output style="height:29px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px;font-variant-numeric:tabular-nums">{{ montoIvaRet }}</output>
+                <button type="button" onClick="{{ addIva }}" disabled="{{ addIvaDisabled }}" title="{{ addIvaTitle }}" style="grid-column:3 / 5;justify-self:end;padding:0;font-size:12.5px;font-weight:600;color:#0a6ff0;background:none;border:0;border-bottom:1px solid #0a6ff0;cursor:{{ addIvaCursor }};opacity:{{ addIvaOpacity }};white-space:nowrap" style-hover="color:#2f57b3;border-color:#2f57b3">+ Retención de IVA</button>
+              </div>
+              <sc-for list="{{ ivaRows }}" as="r" hint-placeholder-count="1">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 112px 78px 96px 22px;column-gap:8px;align-items:center">
+                  <span></span>
+                  <input type="text" inputMode="decimal" value="{{ r.base }}" onChange="{{ r.setBase }}" aria-label="Base retención IVA" style="width:100%;height:29px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+                  <select value="{{ r.pct }}" onChange="{{ r.setPct }}" aria-label="Porcentaje retención IVA" style="width:100%;height:29px;padding:0 4px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                    <option>10%</option>
+                    <option>20%</option>
+                    <option>30%</option>
+                    <option>50%</option>
+                    <option>70%</option>
+                    <option>100%</option>
+                  </select>
+                  <output style="height:29px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px;font-variant-numeric:tabular-nums">{{ r.valor }}</output>
+                  <sc-if value="{{ r.removable }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" onClick="{{ r.remove }}" title="Quitar" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#8d99a6;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#fdecec;color:#c0392b">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                  </button>
+                </sc-if>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="height:1px;background:#dfe3e8"></div>
+
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 112px 78px 96px 22px;column-gap:8px;align-items:center">
+                <span style="font-size:12.5px;text-align:right;color:#495057">Base Imponible</span>
+                <output style="height:29px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px;font-variant-numeric:tabular-nums">{{ baseImponibleRet }}</output>
+                <button type="button" onClick="{{ addFuente }}" disabled="{{ addFuenteDisabled }}" title="{{ addFuenteTitle }}" style="grid-column:3 / 5;justify-self:end;padding:0;font-size:12.5px;font-weight:600;color:#0a6ff0;background:none;border:0;border-bottom:1px solid #0a6ff0;cursor:{{ addFuenteCursor }};opacity:{{ addFuenteOpacity }};white-space:nowrap" style-hover="color:#2f57b3;border-color:#2f57b3">+ Retención en la Fuente</button>
+              </div>
+              <sc-for list="{{ fuenteRows }}" as="r" hint-placeholder-count="1">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 112px 78px 96px 22px;column-gap:8px;align-items:center">
+                  <select value="{{ r.code }}" onChange="{{ r.setCode }}" aria-label="Concepto de retención en la fuente" style="width:100%;min-width:0;height:29px;padding:0 6px;font-size:12.5px;color:#495057;background:#fff;border:1px solid #ced4da;border-radius:4px">
+                    <option value=""></option>
+                    <option value="312">312 — Servicios predomina el intelecto 1%</option>
+                    <option value="322">322 — Servicios predomina la mano de obra 2%</option>
+                    <option value="332">332 — Otras retenciones aplicables 8%</option>
+                  </select>
+                  <input type="text" inputMode="decimal" value="{{ r.base }}" onChange="{{ r.setBase }}" aria-label="Base retención en la fuente" style="width:100%;height:29px;padding:0 8px;font-size:12.5px;text-align:right;color:#343a40;background:#fff;border:1px solid #ced4da;border-radius:4px;font-variant-numeric:tabular-nums" />
+                  <output style="height:29px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px;font-variant-numeric:tabular-nums;justify-content:center">{{ r.pct }}</output>
+                  <output style="height:29px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px;font-variant-numeric:tabular-nums">{{ r.valor }}</output>
+                  <sc-if value="{{ r.removable }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" onClick="{{ r.remove }}" title="Quitar" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;color:#8d99a6;background:transparent;border:0;border-radius:4px;cursor:pointer" style-hover="background:#fdecec;color:#c0392b">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                  </button>
+                </sc-if>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="height:1px;background:#dfe3e8"></div>
+
+            <sc-if value="{{ hasAnexoErrors }}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="display:flex;flex-direction:column;gap:3px;padding:8px 10px;font-size:12px;color:#a61e2d;background:#fdf0f1;border:1px solid #f3c7cc;border-radius:4px">
+                <sc-for list="{{ anexoErrors }}" as="e" hint-placeholder-count="1">
+                  <span>{{ e.msg }}</span>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 112px 78px 96px 22px;column-gap:8px;align-items:center">
+              <span style="grid-column:1 / 4;font-size:12.5px;text-align:right;color:#495057">Total Retenido</span>
+              <output style="height:29px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-size:12.5px;color:#495057;background:#eceff2;border:1px solid #dee2e6;border-radius:4px;font-variant-numeric:tabular-nums;font-weight:600;color:#343a40">{{ totalRetenido }}</output>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:820}}">
+class Component extends DCLogic {
+  state = {
+    wide: false,
+    narrow: typeof window !== 'undefined' && window.innerWidth < 1100,
+    calendarOpen: false,
+    calendarCompOpen: false,
+    focused: null,
+    menuOpen: false,
+    closing: false,
+    asideClosing: false,
+    dateDraft: {},
+    vals: { fechaEmision: '01/01/2026', fechaComprobante: '01/01/2026', numeroDocumento: '0917765432001', razonSocial: '', direccion: '', telefono: '', correo: '', numeroComprobante: '', autorizacion: '12345678901234567890123456789012345678901234567890', conceptoGeneral: '' },
+    correos: ['1234@gmail.com', 'admin@jQueryScript.Net'],
+    correoDraft: '',
+    modal: null,
+    query: '',
+    conceptoLine: null,
+    conceptoDraft: '',
+    ivaRows: [{ id: 1, base: '100.00', pct: '30%' }],
+    fuenteRows: [{ id: 1, code: '312', base: '200.00' }],
+    anexoErrors: [],
+    activeLine: null,
+    secuencia: '0000123',
+    estado: 'Bloqueado',
+    bases: [{ id: 1, rate: '15%', amount: '100.50' }, { id: 2, rate: '8%', amount: '100.50' }],
+    basesError: '',
+    formErrors: [],
+    detalleVisible: true,
+    baseExenta: '100.50',
+    provision: '2101001',
+    isNew: false,
+    docs: [
+      { num: '0000123', date: '01/01/2026', proveedor: 'Red de Dispensario Médico …', valor: '200.00', estado: 'retenido' },
+      { num: '0000124', date: '04/01/2026', proveedor: 'Red de Dispensario Médico …', valor: '165.23', estado: 'anulado' },
+      { num: '0000125', date: '05/01/2026', proveedor: 'Red de Dispensario Médico …', valor: '12.34', estado: '' }
+    ],
+    selYear: 2026,
+    selMonth: 0,
+    compView: { y: 2026, m: 0 },
+    anexos: [
+      { ref: 'Ret: 001-001-000009876', amount: '32.00', value: 32, ivaVal: 30, fteVal: 2, date: '12/ENE/2026', hasDetail: true, iva: 'Iva: 100  30% = 30.00', fte: 'Fte: 200  1%  (312) = 2.00' },
+      { ref: 'EgrBco: 0000987', amount: '200.00', value: 0, ivaVal: 0, fteVal: 0, date: '15/ENE/2026', hasDetail: false, iva: '', fte: '' }
+    ],
+    lines: [
+      { id: 3, cuenta: '1202001', referencia: 'Cuenta contable', concepto: 'Diario de Reclasificacion', debe: '301.50', haber: '', checked: false }
+    ]
+  };
+
+  componentDidMount() {
+    this.onResize = () => {
+      const narrow = window.innerWidth < 1100;
+      if (narrow !== this.state.narrow) this.setState({ narrow: narrow, wide: false });
+    };
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+    this.onDocDown = e => {
+      if (this.state.conceptoLine === null) return;
+      if (e.target.closest && e.target.closest('[data-concepto-cell]')) return;
+      this.setState({ conceptoLine: null });
+    };
+    document.addEventListener('mousedown', this.onDocDown);
+    this.onMenuDown = e => {
+      if (this.state.menuOpen && !(e.target.closest && e.target.closest('[data-nz-menu]'))) this.setState({ menuOpen: false });
+    };
+    document.addEventListener('mousedown', this.onMenuDown);
+    this.generarDetalle(true);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    document.removeEventListener('mousedown', this.onDocDown);
+    document.removeEventListener('mousedown', this.onMenuDown);
+    clearTimeout(this._mt); clearTimeout(this._at);
+  }
+
+  closeModal(patch) {
+    if (!this.state.modal) return;
+    this.setState(Object.assign({ closing: true }, patch || {}));
+    clearTimeout(this._mt);
+    this._mt = setTimeout(() => this.setState({ modal: null, closing: false, query: '' }), 300);
+  }
+
+  closeAside() {
+    this.setState({ asideClosing: true });
+    clearTimeout(this._at);
+    this._at = setTimeout(() => this.setState({ wide: false, asideClosing: false }), 300);
+  }
+
+  dateCtl(field) {
+    const s = this.state;
+    const draft = s.dateDraft[field];
+    const focused = s.focused === field;
+    return {
+      value: draft !== undefined ? draft : (s.vals[field] || ''),
+      border: focused ? '#0a6ff0' : '#ced4da',
+      ring: focused ? '0 0 0 1px #0a6ff0' : 'none',
+      onFocus: () => this.setState({ focused: field, calendarOpen: false, calendarCompOpen: false }),
+      onChange: e => {
+        const d = e.target.value.replace(/\D/g, '').slice(0, 8);
+        const v = d.length > 4 ? d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4) : d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+        this.setState(st => ({ dateDraft: Object.assign({}, st.dateDraft, { [field]: v }) }));
+      },
+      onBlur: () => this.commitDate(field),
+      onKeyDown: e => {
+        if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+        if (e.key === 'Escape') this.setState(st => { const d = Object.assign({}, st.dateDraft); delete d[field]; return { dateDraft: d }; });
+      }
+    };
+  }
+
+  commitDate(field) {
+    const s = this.state;
+    const text = s.dateDraft[field];
+    const drop = Object.assign({}, s.dateDraft); delete drop[field];
+    if (text === undefined) { this.setState({ focused: null }); return; }
+    if (text === '' && field !== 'fechaEmision') { this.setState(st => ({ dateDraft: drop, focused: null, vals: Object.assign({}, st.vals, { [field]: '' }) })); return; }
+    const MONTHS = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
+    let err = '';
+    if (!m) err = 'fecha incompleta, use el formato dd/mm/aaaa.';
+    else {
+      const d = +m[1], mo = +m[2] - 1, y = +m[3];
+      const dt = new Date(y, mo, d);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      if (dt.getFullYear() !== y || dt.getMonth() !== mo || dt.getDate() !== d) err = 'la fecha no existe.';
+      else if (dt > today) err = 'la fecha no puede ser posterior a hoy.';
+      else if (field === 'fechaEmision' && (y !== s.selYear || mo !== s.selMonth)) err = 'debe estar dentro del periodo ' + s.selYear + ' / ' + MONTHS[s.selMonth] + '.';
+    }
+    const label = field === 'fechaEmision' ? 'Emisión: ' : 'Fecha del comprobante: ';
+    if (err) { this.setState({ dateDraft: drop, focused: null, formErrors: [label + err] }); return; }
+    this.setState(st => ({ dateDraft: drop, focused: null, vals: Object.assign({}, st.vals, { [field]: text }), formErrors: [] }));
+  }
+
+  setVal(name, value) {
+    this.setState(st => ({ vals: Object.assign({}, st.vals, { [name]: value }), formErrors: [] }));
+  }
+
+  field(name) {
+    const s = this.state;
+    const value = s.vals[name] || '';
+    const up = !!value || s.focused === name;
+    const clamp = { maxWidth: 'calc(100% - 34px)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
+    return {
+      value: value,
+      onChange: e => this.setVal(name, e.target.value),
+      onFocus: () => this.setState({ focused: name }),
+      onBlur: () => this.setState({ focused: null }),
+      label: up
+        ? Object.assign({ position: 'absolute', left: '9px', top: '2px', fontSize: '9.5px', letterSpacing: '.2px', color: '#0a6ff0', pointerEvents: 'none', transition: 'all .12s' }, clamp)
+        : Object.assign({ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', fontSize: '12.5px', color: '#8d99a6', pointerEvents: 'none', transition: 'all .12s' }, clamp)
+    };
+  }
+
+  nuevo() {
+    const s = this.state;
+    const pad = n => (n < 10 ? '0' : '') + n;
+    const today = new Date();
+    const inPeriod = today.getFullYear() === s.selYear && today.getMonth() === s.selMonth;
+    const fecha = inPeriod ? pad(today.getDate()) + '/' + pad(today.getMonth() + 1) + '/' + today.getFullYear() : '01/' + pad(s.selMonth + 1) + '/' + s.selYear;
+    const next = String(s.docs.reduce((m, d) => Math.max(m, Number(d.num) || 0), 0) + 1).padStart(7, '0');
+    const id = Date.now();
+    this.setState({
+      secuencia: next, estado: 'En edición', isNew: true, formErrors: [], basesError: '',
+      vals: { fechaEmision: fecha, fechaComprobante: '', numeroDocumento: '', razonSocial: '', direccion: '', telefono: '', correo: '', numeroComprobante: '', autorizacion: '', conceptoGeneral: '' },
+      correos: [], correoDraft: '',
+      lines: [],
+      detalleVisible: false,
+      baseExenta: '',
+      bases: [{ id: id + 1, rate: '15%', amount: '' }],
+      anexos: [],
+      ivaRows: [{ id: id + 2, base: '', pct: '30%' }],
+      fuenteRows: [{ id: id + 3, code: '', base: '' }],
+      anexoErrors: [],
+      calendarOpen: false, calendarCompOpen: false, conceptoLine: null, modal: null
+    });
+  }
+
+  generarDetalle(silent) {
+    const s = this.state;
+    const num = v => Number(String(v || '0').replace(/,/g, '')) || 0;
+    const f2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const iva = s.bases.reduce((t, b) => t + num(b.amount) * parseFloat(b.rate) / 100, 0);
+    const total = num(s.baseExenta) + s.bases.reduce((t, b) => t + num(b.amount), 0) + iva;
+    if (iva + total <= 0) {
+      if (!silent) this.setState({ formErrors: ['Para actualizar el detalle contable, Monto IVA + Monto TOTAL debe ser mayor a cero.'] });
+      return;
+    }
+    const PROV = { '2101001': 'Cuentas por Pagar Proveedores', '2101002': 'Proveedores del Exterior' };
+    const concepto = s.vals.conceptoGeneral || '';
+    const oldT = s.lines.find(l => l.fixed === 'total');
+    const oldI = s.lines.find(l => l.fixed === 'iva');
+    const others = s.lines.filter(l => !l.fixed);
+    let id = Date.now();
+    const lines = [{ id: oldT ? oldT.id : id++, fixed: 'total', cuenta: s.provision, referencia: PROV[s.provision] || 'Proveedores', concepto: oldT ? oldT.concepto : concepto, debe: '', haber: f2(total), checked: false }];
+    if (iva > 0) lines.push({ id: oldI ? oldI.id : id++, fixed: 'iva', cuenta: '1202002', referencia: 'Cuenta contable', concepto: oldI ? oldI.concepto : concepto, debe: f2(iva), haber: '', checked: false });
+    this.setState({ lines: lines.concat(others), detalleVisible: true, formErrors: [] });
+  }
+
+  setBase(id, key, value) {
+    this.setState(st => ({ bases: st.bases.map(b => (b.id === id ? Object.assign({}, b, { [key]: value }) : b)), basesError: '' }));
+  }
+
+  setPeriod(y, m) {
+    const pad = n => (n < 10 ? '0' : '') + n;
+    const p = (this.state.vals.fechaEmision || '').split('/');
+    const inPeriod = p.length === 3 && Number(p[1]) - 1 === m && Number(p[2]) === y;
+    this.setState(st => ({ selYear: y, selMonth: m, calendarOpen: false, vals: inPeriod ? st.vals : Object.assign({}, st.vals, { fechaEmision: '01/' + pad(m + 1) + '/' + y }) }));
+  }
+
+  setRow(list, id, key, value) {
+    this.setState(st => ({ [list]: st[list].map(r => (r.id === id ? Object.assign({}, r, { [key]: value }) : r)), anexoErrors: [] }));
+  }
+
+  setLine(id, key, value) {
+    this.setState(st => ({ lines: st.lines.map(l => (l.id === id ? Object.assign({}, l, { [key]: value }) : l)) }));
+  }
+
+  modalSpec() {
+    const m = this.state.modal;
+    if (m === 'sri') return {
+      title: 'Comprobantes electrónicos — Portal SRI',
+      hint: 'Seleccione un comprobante descargado del portal del SRI. Al aceptar se llenan los campos de cabecera.',
+      width: '720px', confirm: 'Cargar comprobante',
+      cols: ['RUC', 'Razón Social', 'Comprobante', 'Fecha', 'Total'],
+      rows: [
+        ['1790012345001', 'Distribuidora Andina S.A.', '001-001-000009876', '12/ENE/2026', '1,233.00'],
+        ['0991234567001', 'Importadora Pacífico Cía. Ltda.', '002-004-000001204', '13/ENE/2026', '860.40'],
+        ['1792233445001', 'Suministros Nazca S.A.', '001-002-000000987', '15/ENE/2026', '200.00']
+      ]
+    };
+    if (m === 'proveedor') return {
+      title: 'Buscar proveedor',
+      hint: 'Si el proveedor no existe, se crea automáticamente al grabar el comprobante.',
+      width: '580px', confirm: 'Seleccionar',
+      cols: ['RUC / Cédula', 'Razón Social', 'Teléfono'],
+      rows: [
+        ['1790012345001', 'Distribuidora Andina S.A.', '02 244 7788'],
+        ['0991234567001', 'Importadora Pacífico Cía. Ltda.', '04 288 1120'],
+        ['1792233445001', 'Suministros Nazca S.A.', '02 290 5566']
+      ]
+    };
+    if (m === 'busqueda') return {
+      title: 'Búsqueda de Comprobante',
+      hint: 'Busque por número, proveedor o valor dentro del periodo seleccionado.',
+      width: '640px', confirm: 'Abrir comprobante',
+      cols: ['Número', 'Emisión', 'Proveedor', 'Valor'],
+      rows: [
+        ['0000123', '01/01/2026', 'Red de Dispensario Médico …', '200.00'],
+        ['0000124', '04/01/2026', 'Red de Dispensario Médico …', '165.23'],
+        ['0000125', '05/01/2026', 'Red de Dispensario Médico …', '12.34']
+      ]
+    };
+    if (m === 'plan') return {
+      title: 'Plan de Cuentas',
+      hint: '',
+      width: '500px', confirm: 'Seleccionar',
+      plan: true,
+      reserved: ['1201001'],
+      cols: ['Cuenta', 'Descripción'],
+      rows: [
+        ['1', 'ACTIVO'],
+        ['12', 'ACTIVO CORRIENTE'],
+        ['1201', 'CAJA'],
+        ['1201001', 'Cuenta contable'],
+        ['1201002', 'Cuenta contable'],
+        ['1201003', 'Cuenta contable'],
+        ['1202', 'BANCOS'],
+        ['1202001', 'Cuenta contable'],
+        ['1202002', 'Cuenta contable'],
+        ['1202003', 'Cuenta contable']
+      ]
+    };
+    if (m === 'concepto') return { title: 'Concepto de la línea', hint: 'El concepto puede ser extenso; se edita en esta ventana.', width: '560px', confirm: 'Aceptar' };
+    if (m === 'anexo') return { title: 'Comprobante de Retención', hint: '', width: '660px', confirm: 'Grabar' };
+    return { title: '', hint: '', width: '600px', confirm: 'Aceptar' };
+  }
+
+  pickRow(cells) {
+    const m = this.state.modal;
+    if (m === 'sri' || m === 'proveedor') {
+      const next = { numeroDocumento: cells[0], razonSocial: cells[1] };
+      if (m === 'sri') {
+        next.numeroComprobante = cells[2];
+        next.fechaComprobante = cells[3];
+        next.autorizacion = '2601202601179001234500110010010000098761234567814';
+      } else {
+        next.telefono = cells[2];
+      }
+      this.setState(st => ({ vals: Object.assign({}, st.vals, next) }));
+      this.closeModal();
+      return;
+    }
+    if (m === 'busqueda') { this.setState({ secuencia: cells[0], estado: 'Bloqueado' }); this.closeModal(); return; }
+    if (m === 'plan') {
+      const id = this.state.activeLine;
+      this.setState(st => ({
+        lines: st.lines.map(l => (l.id === id ? Object.assign({}, l, { cuenta: cells[0], referencia: cells[1] }) : l))
+      }));
+      this.closeModal();
+    }
+  }
+
+  renderVals() {
+    const s = this.state;
+    const spec = this.modalSpec();
+    const selected = s.lines.filter(l => l.checked);
+    const num = v => Number(String(v || '0').replace(/,/g, '')) || 0;
+    const sum = k => s.lines.reduce((t, l) => t + num(l[k]), 0);
+    const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const ivaCalc = s.bases.reduce((t, b) => t + num(b.amount) * parseFloat(b.rate) / 100, 0);
+    const gravadas = s.bases.reduce((t, b) => t + num(b.amount), 0);
+    const montoTotal = num(s.baseExenta) + gravadas + ivaCalc;
+    const retenido = s.anexos.reduce((t, a) => t + a.value, 0);
+    const PROVN = { '2101001': 'Cuentas por Pagar Proveedores', '2101002': 'Proveedores del Exterior' };
+    const diario = [];
+    s.anexos.filter(a => (a.ivaVal || 0) + (a.fteVal || 0) > 0).forEach(a => {
+      const c = 'Retención ' + a.ref.replace(/^Ret:\s*/, '');
+      diario.push({ cuenta: s.provision, referencia: PROVN[s.provision] || 'Proveedores', concepto: c, debe: (a.ivaVal || 0) + (a.fteVal || 0), haber: 0 });
+      if (a.ivaVal) diario.push({ cuenta: '2103001', referencia: 'Retención IVA por pagar', concepto: c, debe: 0, haber: a.ivaVal });
+      if (a.fteVal) diario.push({ cuenta: '2103002', referencia: 'Retención Fuente por pagar', concepto: c, debe: 0, haber: a.fteVal });
+    });
+    const fmtN = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const MONTO_IVA = 100, BASE_IMP = 100;
+    const RATES = { '312': 1, '322': 2, '332': 8 };
+    const lastIva = s.ivaRows[s.ivaRows.length - 1];
+    const canAddIva = !lastIva || num(lastIva.base) > 0;
+    const lastF = s.fuenteRows[s.fuenteRows.length - 1];
+    const canAddFuente = !lastF || num(lastF.base) > 0;
+    const totalRet = s.ivaRows.reduce((t, r) => t + num(r.base) * parseFloat(r.pct) / 100, 0) + s.fuenteRows.reduce((t, r) => t + (r.code ? num(r.base) * RATES[r.code] / 100 : 0), 0);
+
+    const MONTHS = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const pad = n => (n < 10 ? '0' : '') + n;
+    const noop = () => {};
+    const buildCells = (field, closeKey, y, m) => {
+      const out = ['D', 'L', 'M', 'M', 'J', 'V', 'S'].map(l => ({ label: l, bg: 'transparent', hover: 'transparent', color: '#8d99a6', fw: 600, cursor: 'default', disabled: true, pick: noop }));
+      const first = new Date(y, m, 1).getDay();
+      const days = new Date(y, m + 1, 0).getDate();
+      for (let i = 0; i < first; i++) out.push({ label: '', bg: 'transparent', hover: 'transparent', color: '#adb5bd', fw: 400, cursor: 'default', disabled: true, pick: noop });
+      for (let d = 1; d <= days; d++) {
+        const val = pad(d) + '/' + pad(m + 1) + '/' + y;
+        const future = new Date(y, m, d) > today;
+        const sel = s.vals[field] === val;
+        out.push({
+          label: String(d), fw: sel ? 600 : 400, disabled: future,
+          bg: sel ? '#0a6ff0' : 'transparent', hover: future ? 'transparent' : (sel ? '#0a6ff0' : '#eef3fd'),
+          color: sel ? '#fff' : (future ? '#ced4da' : '#343a40'),
+          cursor: future ? 'not-allowed' : 'pointer',
+          pick: future ? noop : () => { this.setVal(field, val); this.setState({ [closeKey]: false }); }
+        });
+      }
+      return out;
+    };
+    const cells = buildCells('fechaEmision', 'calendarOpen', s.selYear, s.selMonth);
+    const cv = s.compView;
+    const atCurrentMonth = cv.y > today.getFullYear() || (cv.y === today.getFullYear() && cv.m >= today.getMonth());
+    const KNOWN = ['1790012345001', '0991234567001', '1792233445001'];
+    const doc = (s.vals.numeroDocumento || '').trim();
+    const IVA_RATES = ['15%', '8%', '5%', '0%'];
+    const lastBase = s.bases[s.bases.length - 1];
+    const canAddBase = s.bases.length < IVA_RATES.length && (!lastBase || num(lastBase.amount) > 0);
+    
+
+    const q = s.query.trim().toLowerCase();
+    const filteredRows = (spec.rows || []).filter(r => !q || r.some(c => String(c).toLowerCase().indexOf(q) !== -1));
+
+    const f = {};
+    ['fechaEmision', 'fechaComprobante', 'numeroDocumento', 'razonSocial', 'direccion', 'telefono', 'correo', 'numeroComprobante', 'autorizacion', 'conceptoGeneral'].forEach(n => { f[n] = this.field(n); });
+
+    return {
+      f: f,
+      calendarOpen: s.calendarOpen,
+      calendarCells: cells,
+      toggleCalendar: () => this.setState({ calendarOpen: !s.calendarOpen, calendarCompOpen: false }),
+      calendarCompOpen: s.calendarCompOpen,
+      calendarCompCells: buildCells('fechaComprobante', 'calendarCompOpen', cv.y, cv.m),
+      calEmiTitle: MONTHS[s.selMonth] + ' ' + s.selYear,
+      calCompTitle: MONTHS[cv.m] + ' ' + cv.y,
+      prevComp: () => this.setState(st => ({ compView: st.compView.m === 0 ? { y: st.compView.y - 1, m: 11 } : { y: st.compView.y, m: st.compView.m - 1 } })),
+      nextComp: () => { if (!atCurrentMonth) this.setState(st => ({ compView: st.compView.m === 11 ? { y: st.compView.y + 1, m: 0 } : { y: st.compView.y, m: st.compView.m + 1 } })); },
+      prevCompDisabled: false,
+      prevCompDisabledOp: 1,
+      nextCompDisabled: atCurrentMonth,
+      nextCompDisabledOp: atCurrentMonth ? 0.3 : 1,
+      selYear: String(s.selYear),
+      selMonth: String(s.selMonth),
+      monthOpts: MONTHS.map((label, v) => ({ label, v: String(v) })),
+      periodo: s.selYear + ' / ' + MONTHS[s.selMonth],
+      setYear: e => this.setPeriod(Number(e.target.value), s.selMonth),
+      setMonth: e => this.setPeriod(s.selYear, Number(e.target.value)),
+      showEstado: s.estado === 'Bloqueado' || s.estado === 'Anulado',
+      isProveedorNuevo: !!doc && KNOWN.indexOf(doc) === -1,
+      provisionOpts: [
+        { code: '2101001', name: 'Cuentas por Pagar Proveedores' },
+        { code: '2101002', name: 'Proveedores del Exterior' }
+      ],
+      hasBasesError: !!s.basesError,
+      basesError: s.basesError,
+      addBaseDisabled: !canAddBase,
+      addBaseCursor: canAddBase ? 'pointer' : 'not-allowed',
+      addBaseOpacity: canAddBase ? 1 : 0.45,
+      addBaseTitle: canAddBase ? 'Agregar otra tarifa de IVA' : (s.bases.length >= IVA_RATES.length ? 'Ya están abiertas todas las tarifas' : 'Ingrese el monto de la base anterior'),
+      toggleCalendarComp: () => {
+        const p = (s.vals.fechaComprobante || '').split('/');
+        const view = p.length === 3 ? { y: Number(p[2]), m: Number(p[1]) - 1 } : { y: today.getFullYear(), m: today.getMonth() };
+        this.setState({ calendarCompOpen: !s.calendarCompOpen, calendarOpen: false, compView: view });
+      },
+
+      headCols: s.narrow ? 'minmax(0,1fr)' : 'minmax(0,0.78fr) minmax(0,1.2fr)',
+      wide: s.wide,
+      notWide: !s.wide,
+      proveedorEstado: 'Nuevo',
+      correos: s.correos.map((email, i) => ({ email, remove: () => this.setState(st => ({ correos: st.correos.filter((_, j) => j !== i) })) })),
+      correoDraft: s.correoDraft,
+      setCorreoDraft: e => this.setState({ correoDraft: e.target.value }),
+      correoKeyDown: e => {
+        const v = e.target.value.trim();
+        if ((e.key === 'Enter' || e.key === ',') && v) { e.preventDefault(); this.setState(st => ({ correos: st.correos.concat([v]), correoDraft: '' })); }
+        if (e.key === 'Backspace' && !v && s.correos.length) this.setState(st => ({ correos: st.correos.slice(0, -1) }));
+      },
+      asideWidth: s.wide ? 'min(94vw, 620px)' : 'min(88vw, 172px)',
+      asidePos: s.wide ? 'absolute' : 'static',
+      asideShadow: s.wide ? '0 10px 34px rgba(16,24,40,.18)' : 'none',
+      asideToggleLabel: s.wide ? '«' : '»',
+      yearWidth: s.wide ? '120px' : '100%',
+      monthWidth: s.wide ? '160px' : '100%',
+      wideDisplay: s.wide ? 'flex' : 'none',
+      cellDisplay: s.wide ? 'table-cell' : 'none',
+      toggleAside: () => (s.wide ? this.closeAside() : this.setState({ wide: true, asideClosing: false })),
+
+      secuencia: s.secuencia,
+      estado: s.estado,
+
+      docs: s.docs.map(d => Object.assign({}, d, {
+        isAnulado: d.estado === 'anulado',
+        isRetenido: d.estado === 'retenido',
+        bg: d.num === s.secuencia ? '#eef3fd' : 'transparent',
+        open: () => this.setState({ secuencia: d.num, estado: d.estado === 'anulado' ? 'Anulado' : 'Bloqueado', isNew: false, formErrors: [] })
+      })),
+
+      lines: s.lines.map(l => Object.assign({}, l, {
+        isFixed: !!l.fixed,
+        planVis: l.fixed ? 'hidden' : 'visible',
+        checkCursor: l.fixed ? 'not-allowed' : 'pointer',
+        checkTitle: l.fixed ? 'Línea fija: solo se edita el concepto' : 'Seleccionar línea',
+        bg: l.checked ? '#eef3fd' : (l.fixed ? '#f8f9fb' : 'transparent'),
+        toggle: () => l.fixed ? null : this.setState(st => ({ lines: st.lines.map(x => (x.id === l.id ? Object.assign({}, x, { checked: !x.checked }) : x)) })),
+        setDebe: e => { if (!l.fixed) this.setLine(l.id, 'debe', e.target.value); },
+        setHaber: e => { if (!l.fixed) this.setLine(l.id, 'haber', e.target.value); },
+        fmtDebe: () => this.setLine(l.id, 'debe', (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(l.debe)),
+        fmtHaber: () => this.setLine(l.id, 'haber', (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(l.haber)),
+        openPlan: () => { if (!l.fixed) this.setState({ modal: 'plan', activeLine: l.id, query: '', closing: false }); },
+        popoverOpen: s.conceptoLine === l.id,
+        conceptoBtnBg: s.conceptoLine === l.id ? '#eef3fd' : 'transparent',
+        conceptoBtnColor: s.conceptoLine === l.id ? '#0a6ff0' : '#6c757d',
+        openConcepto: () => this.setState(st => ({
+          conceptoLine: st.conceptoLine === l.id ? null : l.id,
+          conceptoDraft: l.concepto
+        }))
+      })),
+      addLine: () => this.setState(st => ({
+        lines: st.lines.concat([{ id: Date.now(), cuenta: '', referencia: '', concepto: '', debe: '', haber: '', checked: false }])
+      })),
+      totalDebe: fmt(sum('debe')),
+      totalHaber: fmt(sum('haber')),
+
+      conceptoDraft: s.conceptoDraft,
+      setConceptoDraft: e => this.setState({ conceptoDraft: e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 300) }),
+      cancelConcepto: () => this.setState({ conceptoLine: null }),
+      saveConcepto: () => {
+        this.setLine(s.conceptoLine, 'concepto', s.conceptoDraft);
+        this.setState({ conceptoLine: null });
+      },
+      conceptoKeyDown: e => {
+        if (e.key === 'Escape') { e.preventDefault(); this.setState({ conceptoLine: null }); }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (!(e.ctrlKey || e.metaKey)) return;
+          this.setLine(s.conceptoLine, 'concepto', e.target.value);
+          this.setState({ conceptoLine: null });
+        }
+      },
+
+      hasSelection: selected.length > 0,
+      selectedCount: selected.length,
+      selectionLabel: selected.length === 1 ? 'Elemento seleccionado' : 'Elementos seleccionados',
+      deleteSelected: () => this.setState(st => ({ lines: st.lines.filter(l => !l.checked || l.fixed) })),
+      clearSelection: () => this.setState(st => ({ lines: st.lines.map(l => Object.assign({}, l, { checked: false })) })),
+
+      bases: s.bases.map((b, i) => ({
+        rate: b.rate, amount: b.amount,
+        fixed: i === 0, rmVis: i === 0 ? 'hidden' : 'visible',
+        remove: () => this.setState(st => ({ bases: st.bases.filter(x => x.id !== b.id), basesError: '' })),
+        setRate: e => this.setBase(b.id, 'rate', e.target.value),
+        setAmount: e => this.setBase(b.id, 'amount', e.target.value),
+        fmtAmount: () => this.setBase(b.id, 'amount', (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(b.amount))
+      })),
+      addBase: () => {
+        if (!canAddBase) return;
+        const used = s.bases.map(b => b.rate);
+        const free = IVA_RATES.filter(r => used.indexOf(r) === -1)[0] || IVA_RATES[0];
+        this.setState(st => ({ bases: st.bases.concat([{ id: Date.now(), rate: free, amount: '' }]), basesError: '' }));
+      },
+      montoTotal: fmt(montoTotal),
+      montoIva: fmt(ivaCalc),
+      baseExenta: s.baseExenta,
+      setBaseExenta: e => this.setState({ baseExenta: e.target.value, formErrors: [] }),
+      fmtBaseExenta: () => this.setState({ baseExenta: (v => (String(v || '').trim() === '' ? '' : fmt(num(v))))(s.baseExenta) }),
+      maskComprobante: e => {
+        const d = e.target.value.replace(/\D/g, '').slice(0, 15);
+        const v = d.length > 6 ? d.slice(0, 3) + '-' + d.slice(3, 6) + '-' + d.slice(6) : d.length > 3 ? d.slice(0, 3) + '-' + d.slice(3) : d;
+        this.setVal('numeroComprobante', v);
+      },
+      hasDiarioAnexo: diario.length > 0,
+      diarioAnexo: diario.map(x => ({ cuenta: x.cuenta, referencia: x.referencia, concepto: x.concepto, debe: x.debe ? fmt(x.debe) : '', haber: x.haber ? fmt(x.haber) : '' })),
+      anexoDebe: fmt(diario.reduce((t, x) => t + x.debe, 0)),
+      anexoHaber: fmt(diario.reduce((t, x) => t + x.haber, 0)),
+      provision: s.provision,
+      setProvision: e => this.setState({ provision: e.target.value }),
+      detalleVisible: s.detalleVisible,
+      detalleHidden: !s.detalleVisible,
+      showDetalle: () => this.generarDetalle(),
+      saldoTotal: fmt(montoTotal - retenido),
+      anexos: s.anexos,
+
+      onNuevo: () => this.nuevo(),
+      onGrabar: () => {
+        const rates = s.bases.map(b => b.rate);
+        const dup = rates.filter((r, i) => rates.indexOf(r) !== i);
+        if (dup.length) { this.setState({ basesError: 'No puede repetirse la tarifa de IVA (' + Array.from(new Set(dup)).join(', ') + ').' }); return; }
+        if (s.isNew) {
+          const errs = [];
+          if (!(s.vals.numeroDocumento || '').trim()) errs.push('Ingrese el documento del proveedor.');
+          if (!(s.vals.razonSocial || '').trim()) errs.push('Ingrese la razón social.');
+          if (!s.vals.fechaEmision) errs.push('Seleccione la fecha de emisión.');
+          if (errs.length) { this.setState({ formErrors: errs }); return; }
+          const total = s.bases.reduce((t, b) => t + num(b.amount), 0);
+          this.setState(st => ({
+            estado: 'Bloqueado', basesError: '', formErrors: [], isNew: false,
+            docs: st.docs.concat([{ num: st.secuencia, date: st.vals.fechaEmision, proveedor: st.vals.razonSocial, valor: total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), estado: '' }])
+          }));
+          return;
+        }
+        this.setState({ estado: 'Bloqueado', basesError: '', formErrors: [] });
+      },
+      hasFormError: s.formErrors.length > 0,
+      formErrors: s.formErrors.map(msg => ({ msg })),
+      onAnular: () => this.setState({ estado: 'Anulado' }),
+      openSri: () => this.setState({ modal: 'sri', query: '', closing: false }),
+      openProveedor: () => this.setState({ modal: 'proveedor', query: '', closing: false }),
+      openBusqueda: () => this.setState({ modal: 'busqueda', query: '', closing: false }),
+      openAnexo: () => this.setState({ modal: 'anexo', query: '', closing: false }),
+
+      modalOpen: !!s.modal,
+      _lock: (typeof document !== "undefined" && (document.body.style.overflow = (s.modal || s.wide) ? "hidden" : "")),
+      modalTitle: spec.title,
+      modalHint: spec.hint,
+      modalWidth: spec.width,
+      modalConfirm: spec.confirm,
+      hasTable: !!spec.cols,
+      isConcepto: s.modal === 'concepto',
+      isAnexo: s.modal === 'anexo',
+      conceptoText: (s.lines.find(l => l.id === s.activeLine) || {}).concepto || '',
+      modalCols: (spec.cols || []).map(label => ({ label })),
+      modalRows: filteredRows.map(row => {
+        const isReserved = !!spec.plan && (spec.reserved || []).indexOf(row[0]) !== -1;
+        const isGroup = !!spec.plan && row[0].length < 7;
+        const locked = isGroup || isReserved;
+        const level = { 1: 0, 2: 1, 4: 2 }[row[0].length];
+        const lvl = level === undefined ? 3 : level;
+        return {
+          cursor: isGroup ? 'default' : (isReserved ? 'not-allowed' : 'pointer'),
+          hover: locked ? 'transparent' : '#eef3fd',
+          pick: locked ? () => {} : () => this.pickRow(row),
+          cells: row.map((v, i) => ({
+            v,
+            pl: spec.plan && i === 1 ? (10 + lvl * 16) + 'px' : '10px',
+            fw: isGroup ? 600 : 400,
+            color: isGroup ? '#212529' : (isReserved ? '#a3abb3' : '#495057'),
+            reserved: i === 1 && isReserved
+          }))
+        };
+      }),
+      noResults: !!spec.rows && filteredRows.length === 0,
+      query: s.query,
+      setQuery: e => this.setState({ query: e.target.value }),
+      montoIvaRet: fmtN(MONTO_IVA),
+      baseImponibleRet: fmtN(BASE_IMP),
+      ivaRows: s.ivaRows.map((r, i) => ({
+        base: r.base, pct: r.pct, valor: fmtN(num(r.base) * parseFloat(r.pct) / 100),
+        removable: i > 0,
+        remove: () => this.setState(st => ({ ivaRows: st.ivaRows.filter(x => x.id !== r.id), anexoErrors: [] })),
+        setBase: e => this.setRow('ivaRows', r.id, 'base', e.target.value),
+        setPct: e => this.setRow('ivaRows', r.id, 'pct', e.target.value)
+      })),
+      addIva: () => { if (canAddIva) this.setState(st => ({ ivaRows: st.ivaRows.concat([{ id: Date.now(), base: '', pct: '70%' }]), anexoErrors: [] })); },
+      addIvaDisabled: !canAddIva,
+      addIvaCursor: canAddIva ? 'pointer' : 'not-allowed',
+      addIvaOpacity: canAddIva ? 1 : 0.45,
+      addIvaTitle: canAddIva ? 'Agregar otra retención de IVA' : 'Ingrese la base de la retención anterior',
+      fuenteRows: s.fuenteRows.map((r, i) => ({
+        code: r.code, base: r.base,
+        pct: r.code ? RATES[r.code] + '%' : '—',
+        valor: fmtN(r.code ? num(r.base) * RATES[r.code] / 100 : 0),
+        removable: i > 0,
+        remove: () => this.setState(st => ({ fuenteRows: st.fuenteRows.filter(x => x.id !== r.id) })),
+        setBase: e => this.setRow('fuenteRows', r.id, 'base', e.target.value),
+        setCode: e => this.setRow('fuenteRows', r.id, 'code', e.target.value)
+      })),
+      addFuente: () => { if (canAddFuente) this.setState(st => ({ fuenteRows: st.fuenteRows.concat([{ id: Date.now(), code: '', base: '' }]) })); },
+      addFuenteDisabled: !canAddFuente,
+      addFuenteCursor: canAddFuente ? 'pointer' : 'not-allowed',
+      addFuenteOpacity: canAddFuente ? 1 : 0.45,
+      addFuenteTitle: canAddFuente ? 'Agregar otra retención en la fuente' : 'Ingrese la base de la retención anterior',
+      totalRetenido: fmtN(totalRet),
+      hasAnexoErrors: s.anexoErrors.length > 0,
+      anexoErrors: s.anexoErrors.map(msg => ({ msg })),
+      closeModal: () => this.closeModal(),
+      modalFade: s.closing ? 'nzFadeOut .3s ease-in-out forwards' : 'nzFade .15s linear',
+      modalSlide: s.closing ? 'nzSlideOut .3s ease-in-out forwards' : 'nzSlide .3s ease-in-out',
+      asideFade: s.asideClosing ? 'nzFadeOut .3s ease-in-out forwards' : 'nzFade .15s linear',
+      asideSlide: s.asideClosing ? 'nzSlideOutL .3s ease-in-out forwards' : 'nzSlideL .3s ease-in-out',
+      menuOpen: s.menuOpen,
+      menuBtnBg: s.menuOpen ? 'rgba(255,255,255,.2)' : 'transparent',
+      toggleMenu: () => this.setState({ menuOpen: !s.menuOpen }),
+      dEmi: this.dateCtl('fechaEmision'),
+      dComp: this.dateCtl('fechaComprobante'),
+      conceptoCount: (s.conceptoDraft || '').length,
+      stop: e => e.stopPropagation(),
+      confirmModal: () => {
+        if (s.modal === 'anexo') {
+          const errs = [];
+          const pcts = s.ivaRows.map(r => r.pct);
+          const dup = pcts.filter((p, i) => pcts.indexOf(p) !== i);
+          if (dup.length) errs.push('Hay retenciones de IVA con el mismo porcentaje (' + Array.from(new Set(dup)).join(', ') + ').');
+          const sumBases = s.ivaRows.reduce((t, r) => t + num(r.base), 0);
+          if (Math.abs(sumBases - MONTO_IVA) > 0.005) errs.push('La suma de las bases de IVA (' + fmtN(sumBases) + ') debe ser igual al Monto IVA (' + fmtN(MONTO_IVA) + ').');
+          if (errs.length) { this.setState({ anexoErrors: errs }); return; }
+          const ivaT = s.ivaRows.reduce((t, r) => t + num(r.base) * parseFloat(r.pct) / 100, 0);
+          const fteT = s.fuenteRows.reduce((t, r) => t + (r.code ? num(r.base) * RATES[r.code] / 100 : 0), 0);
+          this.setState(st => ({
+            anexoErrors: [],
+            anexos: st.anexos.concat([{
+              ref: 'Ret: 001-001-00000' + (9876 + st.anexos.length),
+              amount: fmtN(ivaT + fteT), value: ivaT + fteT, ivaVal: ivaT, fteVal: fteT, date: '12/ENE/2026', hasDetail: true,
+              iva: 'Iva: ' + st.ivaRows.map(r => fmtN(num(r.base)) + '  ' + r.pct).join(', ') + ' = ' + fmtN(ivaT),
+              fte: 'Fte: ' + fmtN(fteT)
+            }])
+          }));
+          this.closeModal();
+        } else if (spec.rows) {
+          this.pickRow(spec.rows[0]);
+        } else {
+          this.closeModal();
+        }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
